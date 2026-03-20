@@ -1,0 +1,61 @@
+{
+    "name": "DF_recon_google_ads_edmunds",
+    "properties": {
+        "folder": {
+            "name": "SALES/EDW_Web/PPL_google_ads_edw_web_load_EDL"
+        },
+        "type": "MappingDataFlow",
+        "typeProperties": {
+            "sources": [
+                {
+                    "dataset": {
+                        "referenceName": "DS_Generic_Snowflake",
+                        "type": "DatasetReference"
+                    },
+                    "name": "SQingestionrecordcount"
+                },
+                {
+                    "dataset": {
+                        "referenceName": "DS_Generic_Blob_edwsaleslanding_DelimitedText",
+                        "type": "DatasetReference"
+                    },
+                    "name": "SQedlcountfile"
+                }
+            ],
+            "sinks": [
+                {
+                    "dataset": {
+                        "referenceName": "DS_Generic_edwlanding_File",
+                        "type": "DatasetReference"
+                    },
+                    "name": "sink1",
+                    "description": "Export data to DS_Generic_edwlanding_File"
+                },
+                {
+                    "name": "RECONSTATUS"
+                }
+            ],
+            "transformations": [
+                {
+                    "name": "EXPTRANS"
+                },
+                {
+                    "name": "EXPTRANS1"
+                },
+                {
+                    "name": "JNRTRANS"
+                },
+                {
+                    "name": "EXPTRANS2"
+                },
+                {
+                    "name": "select1"
+                },
+                {
+                    "name": "aggregate1"
+                }
+            ],
+            "script": "parameters{\n\tOutput_recon_File as string ('recon_stats_google_ads_edmunds.csv'),\n\tSource_recon_File as string,\n\tSource_recon_Path as string\n}\nsource(output(\n\t\tTGT_REC_COUNT as decimal(38,0)\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'SELECT CASE WHEN DATE_TRUNC(\\'DAY\\',\"insert_ts\") = current_date THEN record_count  WHEN DATE_TRUNC(\\'DAY\\',\"insert_ts\") <> current_date THEN  0   END tgt_rec_count FROM sales.edw_stage.ingestion_record_count  WHERE insert_ts= (SELECT MAX(insert_ts) FROM sales.edw_stage.ingestion_record_count WHERE feed_name=\\'google_ads\\')',\n\tformat: 'query') ~> SQingestionrecordcount\nsource(output(\n\t\tRecord_Count as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\trowUrlColumn: 'currentlyprocessedfilename',\n\twildcardPaths:[(concat($Source_recon_Path,'/',$Source_recon_File,'*.txt'))]) ~> SQedlcountfile\nSQingestionrecordcount derive(dummy_DB = '1') ~> EXPTRANS\naggregate1 derive(File_record_Count = File_record_Count,\n\t\tFile_Name = replace(replace(replace(toString(currentlyprocessedfilename),'[',''),']',''),',',';'),\n\t\tdummy_FF = '1') ~> EXPTRANS1\nEXPTRANS, EXPTRANS1 join(dummy_DB == dummy_FF,\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JNRTRANS\nJNRTRANS derive(File_record_Count = File_record_Count,\n\t\tTGT_REC_COUNT = TGT_REC_COUNT,\n\t\trecon_stat_var = :v_recon_status,\n\t\tv_recon_status := iif(File_record_Count == toDecimal(TGT_REC_COUNT), 'SUCCESS', 'FAILURE')) ~> EXPTRANS2\nEXPTRANS2 select(mapColumn(\n\t\tTGT_CNT = TGT_REC_COUNT,\n\t\tSRC_CNT = File_record_Count,\n\t\tSRC_FileName = File_Name,\n\t\tRECON_STATUS = recon_stat_var\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> select1\nSQedlcountfile aggregate(File_record_Count = sum(toInteger(Record_Count)),\n\t\tcurrentlyprocessedfilename = collect(currentlyprocessedfilename)) ~> aggregate1\nselect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[($Output_recon_File)],\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> sink1\nselect1 sink(validateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tstore: 'cache',\n\tformat: 'inline',\n\toutput: true,\n\tsaveOrder: 1) ~> RECONSTATUS"
+        }
+    }
+}
