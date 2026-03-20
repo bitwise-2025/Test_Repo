@@ -1,0 +1,1706 @@
+{
+    "name": "All_components",
+    "properties": {
+        "activities": [
+            {
+                "name": "Copy data1",
+                "type": "Copy",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "AzureSqlSource",
+                        "additionalColumns": {
+                            "type": "Expression",
+                            "value": "@pipeline().Pipeline"
+                        },
+                        "queryTimeout": {
+                            "value": "@pipeline().parameters.Sample_ppl",
+                            "type": "Expression"
+                        },
+                        "isolationLevel": {
+                            "value": "@{pipeline().Pipeline}",
+                            "type": "Expression"
+                        },
+                        "partitionOption": {
+                            "value": "@pipeline().GroupId",
+                            "type": "Expression"
+                        },
+                        "partitionSettings": {
+                            "partitionColumnName": {
+                                "value": "@{pipeline().Pipeline}",
+                                "type": "Expression"
+                            },
+                            "partitionUpperBound": {
+                                "value": "@{pipeline().RunId}",
+                                "type": "Expression"
+                            },
+                            "partitionLowerBound": {
+                                "value": "1",
+                                "type": "Expression"
+                            }
+                        }
+                    },
+                    "sink": {
+                        "type": "AvroSink",
+                        "storeSettings": {
+                            "type": "AzureBlobStorageWriteSettings",
+                            "maxConcurrentConnections": {
+                                "value": "@pipeline().Pipeline",
+                                "type": "Expression"
+                            },
+                            "copyBehavior": "FlattenHierarchy",
+                            "blockSizeInMB": {
+                                "value": "abc",
+                                "type": "Expression"
+                            },
+                            "metadata": [
+                                {
+                                    "name": "sample",
+                                    "value": {
+                                        "value": "@pipeline().parameters.Sample_ppl",
+                                        "type": "Expression"
+                                    }
+                                }
+                            ]
+                        },
+                        "formatSettings": {
+                            "type": "AvroWriteSettings",
+                            "maxRowsPerFile": {
+                                "value": "@pipeline().Pipeline",
+                                "type": "Expression"
+                            },
+                            "fileNamePrefix": {
+                                "value": "@utcNow()",
+                                "type": "Expression"
+                            }
+                        }
+                    },
+                    "enableStaging": {
+                        "value": "@pipeline().Pipeline",
+                        "type": "Expression"
+                    },
+                    "stagingSettings": {
+                        "linkedServiceName": {
+                            "referenceName": "AzureBlobStorage2",
+                            "type": "LinkedServiceReference"
+                        },
+                        "path": {
+                            "value": "@pipeline().Pipeline",
+                            "type": "Expression"
+                        },
+                        "enableCompression": {
+                            "value": "@pipeline().parameters.Sample_ppl",
+                            "type": "Expression"
+                        }
+                    },
+                    "parallelCopies": {
+                        "value": "123",
+                        "type": "Expression"
+                    },
+                    "enableSkipIncompatibleRow": true,
+                    "logSettings": {
+                        "enableCopyActivityLog": true,
+                        "copyActivityLogSettings": {
+                            "logLevel": "Warning",
+                            "enableReliableLogging": {
+                                "value": "@pipeline().Pipeline",
+                                "type": "Expression"
+                            }
+                        },
+                        "logLocationSettings": {
+                            "linkedServiceName": {
+                                "referenceName": "AzureBlobStorage1",
+                                "type": "LinkedServiceReference"
+                            },
+                            "path": {
+                                "value": "@variables('sadad')",
+                                "type": "Expression"
+                            }
+                        }
+                    },
+                    "dataIntegrationUnits": {
+                        "value": "@pipeline().Pipeline",
+                        "type": "Expression"
+                    },
+                    "translator": {
+                        "value": "@pipeline().Pipeline",
+                        "type": "Expression"
+                    }
+                },
+                "inputs": [
+                    {
+                        "referenceName": "assert_out",
+                        "type": "DatasetReference"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "referenceName": "Avro1",
+                        "type": "DatasetReference"
+                    }
+                ]
+            },
+            {
+                "name": "Data flow1",
+                "type": "ExecuteDataFlow",
+                "dependsOn": [
+                    {
+                        "activity": "Copy data1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataflow": {
+                        "referenceName": "DF_Filter_sample",
+                        "type": "DataFlowReference"
+                    },
+                    "integrationRuntime": {
+                        "referenceName": "integrationRuntime1",
+                        "type": "IntegrationRuntimeReference"
+                    },
+                    "traceLevel": {
+                        "value": "@activity('Copy data1').output",
+                        "type": "Expression"
+                    },
+                    "runConcurrently": {
+                        "value": "@activity('Copy data1').output",
+                        "type": "Expression"
+                    },
+                    "continueOnError": {
+                        "value": "@activity('Copy data1').output",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "Notebook1",
+                "type": "SynapseNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "Data flow1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebook": {
+                        "referenceName": {
+                            "value": "@activity('Copy data1').output",
+                            "type": "Expression"
+                        },
+                        "type": "NotebookReference"
+                    },
+                    "parameters": {
+                        "Name": {
+                            "value": {
+                                "value": "@activity('Copy data1').output",
+                                "type": "Expression"
+                            },
+                            "type": "int"
+                        }
+                    },
+                    "snapshot": true,
+                    "sparkPool": {
+                        "referenceName": {
+                            "value": "test",
+                            "type": "Expression"
+                        },
+                        "type": "BigDataPoolReference"
+                    },
+                    "executorSize": {
+                        "value": "@activity('Copy data1').output",
+                        "type": "Expression"
+                    },
+                    "conf": {
+                        "spark.dynamicAllocation.enabled": {
+                            "value": "@activity('Copy data1').output",
+                            "type": "Expression"
+                        },
+                        "spark.dynamicAllocation.minExecutors": {
+                            "value": "@activity('Data flow1').output",
+                            "type": "Expression"
+                        },
+                        "spark.dynamicAllocation.maxExecutors": {
+                            "value": "@activity('Copy data1').output",
+                            "type": "Expression"
+                        }
+                    },
+                    "driverSize": {
+                        "value": "@activity('Copy data1').output",
+                        "type": "Expression"
+                    },
+                    "numExecutors": {
+                        "value": "@activity('Data flow1').output",
+                        "type": "Expression"
+                    },
+                    "authentication": {
+                        "type": "MSI"
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureSynapseArtifacts1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Spark job definition1",
+                "type": "SparkJob",
+                "dependsOn": [
+                    {
+                        "activity": "Notebook1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "sparkJob": {
+                        "referenceName": {
+                            "value": "Spark job definition 3",
+                            "type": "Expression"
+                        },
+                        "type": "SparkJobDefinitionReference"
+                    },
+                    "file": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "className": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "args": {
+                        "value": "@activity('Notebook1').output",
+                        "type": "Expression"
+                    },
+                    "scanFolder": {
+                        "value": "@activity('Copy data1').output",
+                        "type": "Expression"
+                    },
+                    "pythonCodeReference": {
+                        "value": "@activity('Copy data1').output",
+                        "type": "Expression"
+                    },
+                    "filesV2": {
+                        "value": "@activity('Notebook1').output",
+                        "type": "Expression"
+                    },
+                    "targetBigDataPool": {
+                        "referenceName": {
+                            "value": "test",
+                            "type": "Expression"
+                        },
+                        "type": "bigDataPoolReference"
+                    },
+                    "executorSize": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "conf": {
+                        "spark.dynamicAllocation.enabled": {
+                            "value": "@activity('Copy data1').output",
+                            "type": "Expression"
+                        },
+                        "spark.dynamicAllocation.minExecutors": {
+                            "value": "@activity('Notebook1').output",
+                            "type": "Expression"
+                        },
+                        "spark.dynamicAllocation.maxExecutors": {
+                            "value": "@activity('Notebook1').output",
+                            "type": "Expression"
+                        }
+                    },
+                    "driverSize": {
+                        "value": "@activity('Notebook1').output",
+                        "type": "Expression"
+                    },
+                    "numExecutors": {
+                        "value": "@activity('Notebook1').output",
+                        "type": "Expression"
+                    },
+                    "authentication": {
+                        "type": "MSI"
+                    },
+                    "configurationType": "Default"
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureSynapseArtifacts1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Azure Data Explorer Command1",
+                "type": "AzureDataExplorerCommand",
+                "dependsOn": [
+                    {
+                        "activity": "Spark job definition1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "command": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "commandTimeout": {
+                        "value": "activity",
+                        "type": "Expression"
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureDataExplorer1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Azure Function1",
+                "type": "AzureFunctionActivity",
+                "dependsOn": [
+                    {
+                        "activity": "Azure Data Explorer Command1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "functionName": {
+                        "value": "@activity('Azure Data Explorer Command1').output",
+                        "type": "Expression"
+                    },
+                    "body": {
+                        "value": "@activity('Azure Data Explorer Command1').output",
+                        "type": "Expression"
+                    },
+                    "headers": {
+                        "name": {
+                            "value": "@activity('Copy data1').output",
+                            "type": "Expression"
+                        }
+                    },
+                    "method": "POST"
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureFunction1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Custom1",
+                "type": "Custom",
+                "dependsOn": [
+                    {
+                        "activity": "Azure Function1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "command": {
+                        "value": "@activity('Azure Data Explorer Command1').output",
+                        "type": "Expression"
+                    },
+                    "resourceLinkedService": {
+                        "referenceName": "AzureBlobStorage2",
+                        "type": "LinkedServiceReference"
+                    },
+                    "folderPath": {
+                        "value": "@activity('Azure Function1').output",
+                        "type": "Expression"
+                    },
+                    "extendedProperties": {
+                        "val": {
+                            "value": "@activity('Azure Data Explorer Command1').output",
+                            "type": "Expression"
+                        }
+                    },
+                    "retentionTimeInDays": 1,
+                    "referenceObjects": {
+                        "linkedServices": [],
+                        "datasets": [
+                            {
+                                "referenceName": "3in1single_partitioning",
+                                "type": "DatasetReference"
+                            }
+                        ]
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureBatch1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Notebook2",
+                "type": "DatabricksNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "Custom1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebookPath": {
+                        "value": "@activity('Azure Data Explorer Command1').output",
+                        "type": "Expression"
+                    },
+                    "baseParameters": {
+                        "p2": {
+                            "value": "@activity('Copy data1').output",
+                            "type": "Expression"
+                        }
+                    },
+                    "libraries": [
+                        {
+                            "jar": "ddddd"
+                        }
+                    ]
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureDatabricks1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Jar1",
+                "type": "DatabricksSparkJar",
+                "dependsOn": [
+                    {
+                        "activity": "Notebook2",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "mainClassName": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "parameters": [
+                        "@activity('Azure Data Explorer Command1').output",
+                        "p1"
+                    ],
+                    "libraries": [
+                        {
+                            "jar": "/volumeskkkk"
+                        }
+                    ]
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureDatabricks1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Python1",
+                "type": "DatabricksSparkPython",
+                "dependsOn": [
+                    {
+                        "activity": "Jar1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pythonFile": {
+                        "value": "@activity('Azure Data Explorer Command1').output",
+                        "type": "Expression"
+                    },
+                    "parameters": [
+                        "@activity('Azure Data Explorer Command1').output",
+                        "p2"
+                    ],
+                    "libraries": [
+                        {
+                            "jar": "kkk"
+                        }
+                    ]
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureDatabricks1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Job1",
+                "type": "DatabricksJob",
+                "dependsOn": [
+                    {
+                        "activity": "Python1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "jobId": {
+                        "value": "@activity('Azure Data Explorer Command1').output",
+                        "type": "Expression"
+                    },
+                    "jobParameters": {
+                        "n1": {
+                            "value": "@activity('Azure Data Explorer Command1').output",
+                            "type": "Expression"
+                        }
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureDatabricks1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "U-SQL1",
+                "type": "DataLakeAnalyticsU-SQL",
+                "dependsOn": [
+                    {
+                        "activity": "Custom1",
+                        "dependencyConditions": [
+                            "Failed"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "scriptPath": "asadad",
+                    "degreeOfParallelism": {
+                        "value": "@activity('Azure Data Explorer Command1').output",
+                        "type": "Expression"
+                    },
+                    "priority": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "runtimeVersion": {
+                        "value": "@pipeline().Pipeline",
+                        "type": "Expression"
+                    },
+                    "compilationMode": "Full",
+                    "scriptLinkedService": {
+                        "referenceName": "AzureBlobStorage2",
+                        "type": "LinkedServiceReference"
+                    },
+                    "parameters": {
+                        "sample": {
+                            "value": "@activity('Custom1').output",
+                            "type": "Expression"
+                        },
+                        "s1": "ppp"
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureDataLakeAnalytics1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Append variable1",
+                "type": "AppendVariable",
+                "dependsOn": [
+                    {
+                        "activity": "U-SQL1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "variableName": "n1",
+                    "value": {
+                        "value": "@pipeline().Pipeline",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "Delete1",
+                "type": "Delete",
+                "dependsOn": [
+                    {
+                        "activity": "Append variable1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "AdditionalSalesData1",
+                        "type": "DatasetReference"
+                    },
+                    "logStorageSettings": {
+                        "linkedServiceName": {
+                            "referenceName": "AzureBlobStorage1",
+                            "type": "LinkedServiceReference"
+                        },
+                        "path": {
+                            "value": "@pipeline().parameters.Sample_ppl",
+                            "type": "Expression"
+                        }
+                    },
+                    "enableLogging": true,
+                    "storeSettings": {
+                        "type": "AzureBlobStorageReadSettings",
+                        "maxConcurrentConnections": {
+                            "value": "@activity('Azure Data Explorer Command1').output",
+                            "type": "Expression"
+                        },
+                        "recursive": {
+                            "value": "@activity('Custom1').output",
+                            "type": "Expression"
+                        },
+                        "modifiedDatetimeStart": {
+                            "value": "@pipeline().parameters.Sample_ppl",
+                            "type": "Expression"
+                        },
+                        "modifiedDatetimeEnd": "2025-06-24T00:00:00.000Z",
+                        "enablePartitionDiscovery": false,
+                        "prefix": {
+                            "value": "@{activity('Azure Data Explorer Command1').output}",
+                            "type": "Expression"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "Execute Pipeline1",
+                "type": "ExecutePipeline",
+                "dependsOn": [
+                    {
+                        "activity": "Delete1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "ADLSGen2AvroJson",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true
+                }
+            },
+            {
+                "name": "Fail1",
+                "type": "Fail",
+                "dependsOn": [
+                    {
+                        "activity": "Execute Pipeline1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "message": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "errorCode": {
+                        "value": "@pipeline().GroupId",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "Get Metadata1",
+                "type": "GetMetadata",
+                "dependsOn": [
+                    {
+                        "activity": "Fail1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "assert_out_tbl",
+                        "type": "DatasetReference"
+                    },
+                    "fieldList": [
+                        "columnCount"
+                    ]
+                }
+            },
+            {
+                "name": "Lookup1",
+                "type": "Lookup",
+                "dependsOn": [
+                    {
+                        "activity": "Get Metadata1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "DelimitedTextSource",
+                        "storeSettings": {
+                            "type": "AzureBlobStorageReadSettings",
+                            "maxConcurrentConnections": {
+                                "value": "@activity('Custom1').output",
+                                "type": "Expression"
+                            },
+                            "recursive": {
+                                "value": "@activity('Azure Data Explorer Command1').output",
+                                "type": "Expression"
+                            },
+                            "modifiedDatetimeStart": {
+                                "value": "@activity('Azure Data Explorer Command1').output",
+                                "type": "Expression"
+                            },
+                            "modifiedDatetimeEnd": "2025-06-11T00:00:00.000Z",
+                            "enablePartitionDiscovery": {
+                                "value": "@activity('Azure Data Explorer Command1').output",
+                                "type": "Expression"
+                            },
+                            "partitionRootPath": {
+                                "value": "@activity('Azure Data Explorer Command1').output",
+                                "type": "Expression"
+                            }
+                        },
+                        "formatSettings": {
+                            "type": "DelimitedTextReadSettings",
+                            "skipLineCount": {
+                                "value": "@activity('Custom1').output",
+                                "type": "Expression"
+                            }
+                        }
+                    },
+                    "dataset": {
+                        "referenceName": "AdditionalSalesData1",
+                        "type": "DatasetReference"
+                    },
+                    "firstRowOnly": {
+                        "value": "@activity('Azure Function1').output",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "Stored procedure1",
+                "type": "SqlServerStoredProcedure",
+                "dependsOn": [
+                    {
+                        "activity": "Lookup1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "storedProcedureName": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "storedProcedureParameters": {
+                        "value": "@activity('Copy data1').output",
+                        "type": "Expression"
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureSqlDatabase1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Script1",
+                "type": "Script",
+                "dependsOn": [
+                    {
+                        "activity": "Stored procedure1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "linkedServiceName": {
+                    "referenceName": "AzureSqlDatabase2",
+                    "type": "LinkedServiceReference"
+                },
+                "typeProperties": {
+                    "scripts": [
+                        {
+                            "parameters": {
+                                "value": "@activity('Azure Function1').output",
+                                "type": "Expression"
+                            },
+                            "type": {
+                                "value": "@activity('Azure Data Explorer Command1').output",
+                                "type": "Expression"
+                            },
+                            "text": {
+                                "value": "@activity('Azure Data Explorer Command1').output",
+                                "type": "Expression"
+                            }
+                        }
+                    ],
+                    "scriptBlockExecutionTimeout": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "logSettings": {
+                        "logDestination": {
+                            "value": "@pipeline().RunId",
+                            "type": "Expression"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "Set variable1",
+                "type": "SetVariable",
+                "dependsOn": [
+                    {
+                        "activity": "Script1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureOutput": true,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "variableName": "sadad",
+                    "value": {
+                        "value": "@pipeline().RunId",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "Validation1",
+                "type": "Validation",
+                "dependsOn": [
+                    {
+                        "activity": "Set variable1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "AggregateFile",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "dsnbdsanba": {
+                                "value": "@pipeline().parameters.Sample_ppl",
+                                "type": "Expression"
+                            }
+                        }
+                    },
+                    "timeout": "0.12:00:00",
+                    "sleep": {
+                        "value": "@activity('Copy data1').output",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "Web1",
+                "type": "WebActivity",
+                "dependsOn": [
+                    {
+                        "activity": "Validation1",
+                        "dependencyConditions": [
+                            "Skipped"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "method": "POST",
+                    "headers": {
+                        "undefined": {
+                            "value": "@activity('Azure Data Explorer Command1').output",
+                            "type": "Expression"
+                        }
+                    },
+                    "linkedServices": [
+                        {
+                            "referenceName": "AmazonS32",
+                            "type": "LinkedServiceReference"
+                        }
+                    ],
+                    "datasets": [
+                        {
+                            "referenceName": "3in1single_partitioning",
+                            "type": "DatasetReference"
+                        }
+                    ],
+                    "disableCertValidation": true,
+                    "httpRequestTimeout": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "turnOffAsync": {
+                        "value": "@activity('Custom1').output",
+                        "type": "Expression"
+                    },
+                    "url": {
+                        "value": "@activity('Data flow1').output",
+                        "type": "Expression"
+                    },
+                    "connectVia": {
+                        "referenceName": "AutoResolveIntegrationRuntime",
+                        "type": "IntegrationRuntimeReference"
+                    },
+                    "body": "{\n  \"GivenName\" : \"Mortimer\",\n  \"SurName\" : \"Smith\",\n  \"NameSuffixText\" : \"Sr\",\n  \"PreferredName\" : \"Morty\",\n}"
+                }
+            },
+            {
+                "name": "WebHook1",
+                "type": "WebHook",
+                "dependsOn": [
+                    {
+                        "activity": "Web1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "url": {
+                        "value": "@activity('Azure Data Explorer Command1').output",
+                        "type": "Expression"
+                    },
+                    "method": "POST",
+                    "headers": {
+                        "m1": {
+                            "value": "@activity('Azure Data Explorer Command1').output",
+                            "type": "Expression"
+                        },
+                        "n2": "m"
+                    },
+                    "body": {
+                        "nc:PersonAgeMeasure": {
+                            "nc:MeasureIntegerValue": 14,
+                            "nc:TimeUnitCode": "ANN"
+                        },
+                        "j:PersonHairColorCode": "BRO",
+                        "nc:PersonName": {
+                            "nc:PersonGivenName": "Mortimer",
+                            "nc:PersonSurName": "Smith",
+                            "nc:PersonNameSuffixText": "Sr",
+                            "nc:PersonPreferredName": "Morty"
+                        }
+                    },
+                    "timeout": "00:10:00",
+                    "reportStatusOnCallBack": {
+                        "value": "@activity('Copy data1').output",
+                        "type": "Expression"
+                    },
+                    "disableCertValidation": true,
+                    "authentication": {
+                        "type": "Basic",
+                        "username": {
+                            "value": "@activity('Azure Data Explorer Command1').output",
+                            "type": "Expression"
+                        },
+                        "password": {
+                            "type": "SecureString",
+                            "value": "**********"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "Hive1",
+                "type": "HDInsightHive",
+                "dependsOn": [
+                    {
+                        "activity": "WebHook1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "scriptPath": "dsadcac",
+                    "arguments": {
+                        "value": "@activity('Azure Function1').output",
+                        "type": "Expression"
+                    },
+                    "getDebugInfo": "Always",
+                    "defines": {
+                        "v": {
+                            "value": "@activity('Custom1').output",
+                            "type": "Expression"
+                        }
+                    },
+                    "variables": {
+                        "b1": {
+                            "value": "@activity('Custom1').output",
+                            "type": "Expression"
+                        }
+                    },
+                    "queryTimeout": 1,
+                    "scriptLinkedService": {
+                        "referenceName": "AzureBlobStorage1",
+                        "type": "LinkedServiceReference"
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "linkedService1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "MapReduce1",
+                "type": "HDInsightMapReduce",
+                "dependsOn": [
+                    {
+                        "activity": "Web1",
+                        "dependencyConditions": [
+                            "Completed"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "jarFilePath": {
+                        "value": "@activity('Copy data1').output",
+                        "type": "Expression"
+                    },
+                    "arguments": {
+                        "value": "@activity('Azure Function1').output",
+                        "type": "Expression"
+                    },
+                    "getDebugInfo": "Always",
+                    "className": {
+                        "value": "@activity('Copy data1').output",
+                        "type": "Expression"
+                    },
+                    "jarLibs": [],
+                    "defines": {
+                        "m1": {
+                            "value": "@activity('Azure Function1').output",
+                            "type": "Expression"
+                        },
+                        "j": "mmm"
+                    },
+                    "jarLinkedService": {
+                        "referenceName": "AzureBlobStorage2",
+                        "type": "LinkedServiceReference"
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "linkedService1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Pig1",
+                "type": "HDInsightPig",
+                "dependsOn": [
+                    {
+                        "activity": "MapReduce1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "scriptPath": {
+                        "value": "@activity('Azure Data Explorer Command1').output",
+                        "type": "Expression"
+                    },
+                    "arguments": [
+                        "@activity('Copy data1').output"
+                    ],
+                    "getDebugInfo": "Always",
+                    "defines": {
+                        "n1": {
+                            "value": "@activity('Azure Function1').output",
+                            "type": "Expression"
+                        }
+                    },
+                    "scriptLinkedService": {
+                        "referenceName": "AzureBlobStorage2",
+                        "type": "LinkedServiceReference"
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "linkedService1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Spark1",
+                "type": "HDInsightSpark",
+                "dependsOn": [
+                    {
+                        "activity": "Validation1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "rootPath": "vccz",
+                    "entryFilePath": "dvx",
+                    "arguments": [
+                        "@activity('Azure Data Explorer Command1').output",
+                        "arg"
+                    ],
+                    "getDebugInfo": "None",
+                    "proxyUser": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "sparkConfig": {
+                        "namq": {
+                            "value": "@pipeline().parameters.Sample_ppl",
+                            "type": "Expression"
+                        }
+                    },
+                    "sparkJobLinkedService": {
+                        "referenceName": "AzureBlobStorage2",
+                        "type": "LinkedServiceReference"
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "linkedService1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Streaming1",
+                "type": "HDInsightStreaming",
+                "dependsOn": [
+                    {
+                        "activity": "Validation1",
+                        "dependencyConditions": [
+                            "Completed"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "mapper": {
+                        "value": "@pipeline().Pipeline",
+                        "type": "Expression"
+                    },
+                    "reducer": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "filePaths": [
+                        "czxc",
+                        "ssdxas"
+                    ],
+                    "input": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "output": {
+                        "value": "@pipeline().Pipeline",
+                        "type": "Expression"
+                    },
+                    "arguments": {
+                        "value": "@activity('Copy data1').output",
+                        "type": "Expression"
+                    },
+                    "getDebugInfo": "Always",
+                    "defines": {
+                        "n1": {
+                            "value": "@activity('Custom1').output",
+                            "type": "Expression"
+                        }
+                    },
+                    "fileLinkedService": {
+                        "referenceName": "AzureBlobStorage1",
+                        "type": "LinkedServiceReference"
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "linkedService1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Machine Learning Batch Execution1",
+                "type": "AzureMLBatchExecution",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "linkedServiceName": {
+                    "referenceName": "AzureML1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Machine Learning Update Resource1",
+                "type": "AzureMLUpdateResource",
+                "dependsOn": [
+                    {
+                        "activity": "Spark1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "linkedServiceName": {
+                    "referenceName": "AzureML1",
+                    "type": "LinkedServiceReference"
+                },
+                "typeProperties": {
+                    "trainedModelName": "dsac",
+                    "trainedModelLinkedServiceName": {
+                        "referenceName": "AzureBlobStorage2",
+                        "type": "LinkedServiceReference"
+                    },
+                    "trainedModelFilePath": "csc "
+                }
+            },
+            {
+                "name": "Machine Learning Execute Pipeline1",
+                "type": "AzureMLExecutePipeline",
+                "dependsOn": [
+                    {
+                        "activity": "Machine Learning Update Resource1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "experimentName": {
+                        "value": "@activity('Copy data1').output",
+                        "type": "Expression"
+                    },
+                    "mlPipelineParameters": {
+                        "n3": {
+                            "value": "@activity('Copy data1').output",
+                            "type": "Expression"
+                        }
+                    },
+                    "mlParentRunId": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "mlExecutionType": "pipeline",
+                    "continueOnStepFailure": true,
+                    "mlPipelineEndpointId": {
+                        "value": "@activity('Azure Data Explorer Command1').output",
+                        "type": "Expression"
+                    },
+                    "version": {
+                        "value": "@activity('Azure Data Explorer Command1').output",
+                        "type": "Expression"
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureMLService1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Power Query1",
+                "type": "ExecuteWranglingDataflow",
+                "dependsOn": [
+                    {
+                        "activity": "Web1",
+                        "dependencyConditions": [
+                            "Skipped"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataflow": {
+                        "referenceName": "powerquery1",
+                        "type": "DataFlowReference"
+                    },
+                    "compute": {
+                        "coreCount": {
+                            "value": "@activity('Custom1').output",
+                            "type": "Expression"
+                        },
+                        "computeType": {
+                            "value": "@activity('Azure Data Explorer Command1').output",
+                            "type": "Expression"
+                        }
+                    },
+                    "queries": [
+                        {
+                            "queryName": "UserQuery",
+                            "dataflowSinks": [
+                                {
+                                    "name": "UserQueryAdditionalSalesData1",
+                                    "dataset": {
+                                        "referenceName": "AdditionalSalesData1",
+                                        "type": "DatasetReference"
+                                    },
+                                    "script": "sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tTransactionID as string,\n\t\tCustomerID as string,\n\t\tProductID as string,\n\t\tSalesAmount as string,\n\t\tTransactionDate as string\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> UserQueryAdditionalSalesData1"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "Stored procedure1_copy1",
+                "type": "SqlServerStoredProcedure",
+                "dependsOn": [
+                    {
+                        "activity": "Lookup1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "storedProcedureName": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "storedProcedureParameters": {
+                        "n1": {
+                            "value": {
+                                "value": "@activity('Azure Function1').output",
+                                "type": "Expression"
+                            },
+                            "type": "Int16"
+                        },
+                        "n2": {
+                            "value": null,
+                            "type": "String"
+                        }
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureSqlDatabase1",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Script1_copy1",
+                "type": "Script",
+                "dependsOn": [
+                    {
+                        "activity": "Stored procedure1_copy1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": true,
+                    "secureInput": true
+                },
+                "userProperties": [],
+                "linkedServiceName": {
+                    "referenceName": "AzureSqlDatabase2",
+                    "type": "LinkedServiceReference"
+                },
+                "typeProperties": {
+                    "scripts": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "n1",
+                                    "type": "Int16",
+                                    "value": {
+                                        "value": "12",
+                                        "type": "Expression"
+                                    },
+                                    "direction": "Input"
+                                }
+                            ],
+                            "type": {
+                                "value": "@activity('Azure Data Explorer Command1').output",
+                                "type": "Expression"
+                            },
+                            "text": {
+                                "value": "@activity('Azure Data Explorer Command1').output",
+                                "type": "Expression"
+                            }
+                        }
+                    ],
+                    "scriptBlockExecutionTimeout": {
+                        "value": "@pipeline().parameters.Sample_ppl",
+                        "type": "Expression"
+                    },
+                    "logSettings": {
+                        "logDestination": {
+                            "value": "@pipeline().RunId",
+                            "type": "Expression"
+                        }
+                    }
+                }
+            }
+        ],
+        "concurrency": 1,
+        "parameters": {
+            "Sample_ppl": {
+                "type": "String",
+                "defaultValue": "\"ab\""
+            }
+        },
+        "variables": {
+            "sadad": {
+                "type": "String",
+                "defaultValue": "ab"
+            },
+            "n1": {
+                "type": "Array",
+                "defaultValue": [
+                    1,
+                    2,
+                    3
+                ]
+            }
+        },
+        "annotations": []
+    }
+}
