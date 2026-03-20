@@ -1,0 +1,11 @@
+{
+    "name": "kv_synapse_cse",
+    "type": "Microsoft.Synapse/workspaces/linkedservices",
+    "properties": {
+        "annotations": [],
+        "type": "AzureKeyVault",
+        "typeProperties": {
+            "baseUrl": "https://kv-synapse-cse.vault.azure.net/"
+        }
+    }
+}

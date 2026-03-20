@@ -1,0 +1,11 @@
+{
+    "name": "AzureBlobStorage2",
+    "type": "Microsoft.Synapse/workspaces/linkedservices",
+    "properties": {
+        "annotations": [],
+        "type": "AzureBlobStorage",
+        "typeProperties": {
+            "connectionString": "DefaultEndpointsProtocol=https;AccountName=axesectdemo;EndpointSuffix=core.windows.net;"
+        }
+    }
+}

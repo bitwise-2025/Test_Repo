@@ -1,0 +1,13 @@
+{
+    "name": "AzureMLService1",
+    "properties": {
+        "annotations": [],
+        "type": "AzureMLService",
+        "typeProperties": {
+            "subscriptionId": "sample_sub",
+            "resourceGroupName": "resource_grp",
+            "mlWorkspaceName": "azure_workspace",
+            "authentication": "MSI"
+        }
+    }
+}

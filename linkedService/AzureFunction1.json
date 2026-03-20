@@ -1,0 +1,12 @@
+{
+    "name": "AzureFunction1",
+    "properties": {
+        "annotations": [],
+        "type": "AzureFunction",
+        "typeProperties": {
+            "functionAppUrl": "adfc",
+            "authentication": "Anonymous"
+        }
+    },
+    "type": "Microsoft.DataFactory/factories/linkedservices"
+}

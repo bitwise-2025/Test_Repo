@@ -1,0 +1,36 @@
+{
+    "name": "AmazonS32",
+    "properties": {
+        "annotations": [],
+        "type": "AmazonS3",
+        "typeProperties": {
+            "serviceUrl": "https://s3.amazonaws.chttps://s3.amazonaws.comom",
+            "accessKeyId": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "AzureKeyVault1",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": {
+                    "value": "name",
+                    "type": "Expression"
+                },
+                "secretVersion": "4"
+            },
+            "secretAccessKey": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "AzureKeyVault2",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "n1",
+                "secretVersion": "6.6"
+            },
+            "authenticationType": "AccessKey"
+        },
+        "connectVia": {
+            "referenceName": "AutoResolveIntegrationRuntime",
+            "type": "IntegrationRuntimeReference"
+        }
+    }
+}
