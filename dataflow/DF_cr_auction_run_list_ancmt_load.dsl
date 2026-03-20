@@ -1,0 +1,191 @@
+parameters{
+	SessionStartTime as string,
+	Pipeline_Run_Id as string,
+	Checkpoint as string,
+	EDL_Container as string,
+	EDL_Src_Path as string,
+	edw_database_table_name as string
+}
+source(output(
+		auction_id as integer,
+		stock_num as integer,
+		announcement_id as integer,
+		announcement_descr as string,
+		loc_num as integer,
+		insert_ts as timestamp,
+		lst_upd_ts as timestamp,
+		lst_upd_user as string,
+		ccr_source as string,
+		ccr_status as string,
+		snapshot_ts as timestamp,
+		snapshot_date as date,
+		edl_insert_ts as timestamp,
+		edl_insert_user as string,
+		edl_update_ts as timestamp,
+		edl_update_user as string
+	),
+	allowSchemaDrift: true,
+	validateSchema: false,
+	ignoreNoFilesFound: false,
+	format: 'delta',
+	fileSystem: ($EDL_Container),
+	folderPath: ($EDL_Src_Path)) ~> SQauctionrunlistancmt
+source(output(
+		edw_database_name as string,
+		dbrx_database_name as string,
+		edw_table_name as string,
+		dbrx_table_name as string,
+		edw_database_table_name as string,
+		encrypted_flag as string,
+		frequency_code as string,
+		extract_type_code as string,
+		from_run_ts as timestamp,
+		to_run_ts as timestamp,
+		temp_run_ts as timestamp,
+		edl_insert_ts as timestamp,
+		edl_update_ts as timestamp,
+		edl_update_user as string
+	),
+	allowSchemaDrift: true,
+	validateSchema: false,
+	ignoreNoFilesFound: false,
+	format: 'delta',
+	fileSystem: ($EDL_Container),
+	folderPath: ($Checkpoint)) ~> PreSQL
+source(output(
+		edw_database_name as string,
+		dbrx_database_name as string,
+		edw_table_name as string,
+		dbrx_table_name as string,
+		edw_database_table_name as string,
+		encrypted_flag as string,
+		frequency_code as string,
+		extract_type_code as string,
+		from_run_ts as timestamp,
+		to_run_ts as timestamp,
+		temp_run_ts as timestamp,
+		edl_insert_ts as timestamp,
+		edl_update_ts as timestamp,
+		edl_update_user as string
+	),
+	allowSchemaDrift: true,
+	validateSchema: false,
+	ignoreNoFilesFound: false,
+	format: 'delta',
+	fileSystem: ($EDL_Container),
+	folderPath: ($Checkpoint)) ~> Getfiltervalues
+filter derive(cr_source = iif(isNull(ccr_source), 'cmx9999', toString(ccr_source))) ~> EXPsourcestatusconvertREFORMAT
+EXPsourcestatusconvertREFORMAT derive(loc_num_out = iif(isNull(loc_num), toInteger(substring(toString(ccr_source), toInteger(4), 4)), loc_num),
+		cr_source_out = toInteger(substring(toString(cr_source), toInteger(4), 4)),
+		cr_status_out = iif(ccr_status=='ACTIVE', 1, iif(ccr_status=='ARCHIVED', 2, iif(ccr_status=='DELETED', 3, 0)))) ~> EXPsourcestatusconvert
+EXPsourcestatusconvert derive(insert_ts = insert_ts,
+		lst_upd_ts = lst_upd_ts,
+		SESSSTART = $SessionStartTime,
+		cr_source_out = toInteger(cr_source_out),
+		cr_status_out = toInteger(cr_status_out),
+		stock_num = toInteger(stock_num),
+		auction_id = toInteger(auction_id),
+		announcement_id = toInteger(announcement_id),
+		loc_num_out = toInteger(loc_num_out),
+		lst_upd_user = substring(toString(lst_upd_user), toInteger(1), 30),
+		announcement_descr = substring(toString(announcement_descr), toInteger(1), 50)) ~> EXPTRANS
+EXPTRANS window(over(stock_num,
+		announcement_id,
+		loc_num_out),
+	asc(insert_ts, true),
+	rownum = rowNumber()) ~> TGTauctionrunlistancmtWindow
+TGTauctionrunlistancmtWindow filter(rownum == 1) ~> TGTauctionrunlistancmtFilter
+TGTauctionrunlistancmtFilter assert(expectTrue(!(isNull(lst_upd_ts) || isNull(lst_upd_user) || isNull(cr_source_out) || isNull(cr_status_out) || isNull(SESSSTART) || isNull(stock_num) || isNull(auction_id) || isNull(announcement_id) || isNull(SESSSTART) || isNull(loc_num_out) || isNull(insert_ts)), false, 'rule1nullcheck')) ~> Assert
+Assert split(isError(),
+	disjoint: false) ~> TGTauctionrunlistancmtAssertConditionalSplitComponent@(TGTauctionrunlistancmtAssertConditionalSplitComponentErrorRows, TGTauctionrunlistancmtAssertConditionalSplitComponentCleanRows)
+PreSQL filter(edw_database_table_name==$edw_database_table_name) ~> filtertablename
+filtertablename alterRow(updateIf(edw_database_table_name==$edw_database_table_name)) ~> alterRowupdatetable
+alterRowupdatetable derive(temp_run_ts = currentTimestamp()) ~> Settemprunts
+Getfiltervalues filter(edw_database_table_name==$edw_database_table_name) ~> checktablename2
+checktablename2 derive(to_run_ts_date = toDate(to_run_ts)) ~> Setfiltervalues
+SQauctionrunlistancmt filter(edl_update_ts>= Getfiltervaluessink#outputs()[1].to_run_ts && snapshot_date>= Getfiltervaluessink#outputs()[1].to_run_ts_date) ~> filter
+TGTauctionrunlistancmtAssertConditionalSplitComponent@TGTauctionrunlistancmtAssertConditionalSplitComponentCleanRows select(mapColumn(
+		auction_id,
+		stock_num,
+		announcement_id,
+		announcement_descr,
+		ss_insert_ts = insert_ts,
+		ss_lst_upd_ts = lst_upd_ts,
+		lst_upd_user,
+		loc_num = loc_num_out,
+		db_source = cr_source_out,
+		ss_db_status = cr_status_out,
+		insert_ts = SESSSTART,
+		lst_upd_ts = SESSSTART
+	),
+	skipDuplicateMapInputs: false,
+	skipDuplicateMapOutputs: true) ~> select1
+select1 alterRow(upsertIf(true())) ~> AlterRow1
+TGTauctionrunlistancmtAssertConditionalSplitComponent@TGTauctionrunlistancmtAssertConditionalSplitComponentErrorRows sink(allowSchemaDrift: true,
+	validateSchema: false,
+	partitionFileNames:['concat($Pipeline_Run_Id,\'_DF_cr_auction_run_list_ancmt_load_reject_records.csv\')'],
+	umask: 0022,
+	preCommands: [],
+	postCommands: [],
+	skipDuplicateMapOutputs: true,
+	saveOrder: 4,
+	mapColumn(
+		ss_lst_upd_ts = lst_upd_ts,
+		lst_upd_user,
+		db_source = cr_source_out,
+		ss_db_status = cr_status_out,
+		insert_ts = SESSSTART,
+		stock_num,
+		auction_id,
+		announcement_id,
+		lst_upd_ts = SESSSTART,
+		loc_num = loc_num_out,
+		ss_insert_ts = insert_ts,
+		announcement_descr
+	),
+	partitionBy('hash', 1)) ~> ErrorRecords
+Settemprunts sink(allowSchemaDrift: true,
+	validateSchema: false,
+	format: 'delta',
+	fileSystem: ($EDL_Container),
+	folderPath: ($Checkpoint),
+	mergeSchema: false,
+	autoCompact: false,
+	optimizedWrite: false,
+	vacuum: 0,
+	deletable: false,
+	insertable: false,
+	updateable: true,
+	upsertable: false,
+	keys:['edw_database_table_name'],
+	pruneCondition: ['edw_database_table_name' -> ([$edw_database_table_name])],
+	umask: 0022,
+	preCommands: [],
+	postCommands: [],
+	skipDuplicateMapInputs: true,
+	skipDuplicateMapOutputs: true,
+	saveOrder: 1,
+	mapColumn(
+		edw_database_table_name,
+		temp_run_ts
+	)) ~> PreSQLUpdate
+Setfiltervalues sink(allowSchemaDrift: true,
+	validateSchema: false,
+	skipDuplicateMapInputs: true,
+	skipDuplicateMapOutputs: true,
+	store: 'cache',
+	format: 'inline',
+	output: false,
+	saveOrder: 2) ~> Getfiltervaluessink
+AlterRow1 sink(allowSchemaDrift: true,
+	validateSchema: false,
+	deletable:false,
+	insertable:false,
+	updateable:false,
+	upsertable:true,
+	keys:['stock_num','announcement_id','loc_num'],
+	format: 'table',
+	skipDuplicateMapInputs: true,
+	skipDuplicateMapOutputs: true,
+	saveOrder: 3,
+	stageInsert: true) ~> sink1
