@@ -1,0 +1,32 @@
+{
+    "name": "DF_insrt_cmplt_rcrd_it_incident_cafsqlp01_cmxcams_load",
+    "properties": {
+        "type": "MappingDataFlow",
+        "typeProperties": {
+            "sources": [
+                {
+                    "dataset": {
+                        "referenceName": "DS_Generic_Blob_edwsaleslanding_DelimitedText",
+                        "type": "DatasetReference"
+                    },
+                    "name": "SQitincident"
+                }
+            ],
+            "sinks": [
+                {
+                    "dataset": {
+                        "referenceName": "DS_Generic_Blob_edwsaleslanding_DelimitedText",
+                        "type": "DatasetReference"
+                    },
+                    "name": "TGTitincident"
+                }
+            ],
+            "transformations": [
+                {
+                    "name": "EXPTRANS"
+                }
+            ],
+            "script": "parameters{\n\tPMWorkflowRunId as string,\n\tPMWorkflowName as string,\n\tPath_Directory as string,\n\tFileName as string\n}\nsource(output(\n\t\tmachine_name as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\twildcardPaths:[(concat($Path_Directory, '/',$FileName))]) ~> SQitincident\nSQitincident derive(app_name_out = 'CAMS_EDW_LOAD_COMPLETE',\n\t\tsummary_out = 'COMPLETE',\n\t\thappened_dt_out = currentTimestamp(),\n\t\tmachine_name = substring(toString(machine_name), toInteger(1), 64)) ~> EXPTRANS\nEXPTRANS sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tsaveOrder: 1,\n\tmapColumn(\n\t\thappened_dt = happened_dt_out,\n\t\tmachine_name,\n\t\tapp_name = app_name_out,\n\t\tsummary = summary_out\n\t)) ~> TGTitincident"
+        }
+    }
+}
