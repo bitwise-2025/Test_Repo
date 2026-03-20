@@ -1,0 +1,158 @@
+{
+    "name": "Generic_db_replication_ppl",
+    "properties": {
+        "activities": [
+            {
+                "name": "Fetch_ID",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "SnowflakeSource",
+                        "query": {
+                            "value": "@concat('select  ID,EXTRACTQUERY_OR_FILEPATH AS EXTRACT_QUERY,SEQ_NUM, TARGET_STAGE_PATH AS TARGET_PATH, SOURCE_TYPE,HOST_NAME,TABLENAME_OR_FILENAME AS FILE_NAME,DATABASE_NAME as DATABASE from DATAOPS.METADATA_CONTROLS.SF_GENERIC_REPLICATION_CONTROL\nwhere pipeline_name='''\n,pipeline().parameters.Pipeline_Name,'''',' and DATAFLOW_NAME=','''',pipeline().parameters.Dataflow_Name,'''')",
+                            "type": "Expression"
+                        },
+                        "exportSettings": {
+                            "type": "SnowflakeExportCopyCommand"
+                        }
+                    },
+                    "dataset": {
+                        "referenceName": "DS_Generic_Snowflake",
+                        "type": "DatasetReference"
+                    },
+                    "firstRowOnly": false
+                }
+            },
+            {
+                "name": "ForEach1",
+                "type": "ForEach",
+                "dependsOn": [
+                    {
+                        "activity": "Fetch_ID",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('Fetch_ID').output.value",
+                        "type": "Expression"
+                    },
+                    "isSequential": false,
+                    "activities": [
+                        {
+                            "name": "SF_Param Replace",
+                            "type": "ExecutePipeline",
+                            "dependsOn": [],
+                            "policy": {
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "pipeline": {
+                                    "referenceName": "Generic_replication_inner",
+                                    "type": "PipelineReference"
+                                },
+                                "waitOnCompletion": true,
+                                "parameters": {
+                                    "id": {
+                                        "value": "@item().ID",
+                                        "type": "Expression"
+                                    },
+                                    "extract_query": {
+                                        "value": "@item().EXTRACT_QUERY",
+                                        "type": "Expression"
+                                    },
+                                    "pipeline_name": {
+                                        "value": "@pipeline().parameters.Pipeline_Name",
+                                        "type": "Expression"
+                                    },
+                                    "SysDateTime": {
+                                        "value": "@pipeline().parameters.SysDatetime",
+                                        "type": "Expression"
+                                    },
+                                    "dataflow_Name": {
+                                        "value": "@pipeline().parameters.Dataflow_Name",
+                                        "type": "Expression"
+                                    },
+                                    "Filepath": {
+                                        "value": "@item().TARGET_PATH",
+                                        "type": "Expression"
+                                    },
+                                    "Filename": {
+                                        "value": "@item().FILE_NAME",
+                                        "type": "Expression"
+                                    },
+                                    "seq_num": {
+                                        "value": "@item().SEQ_NUM",
+                                        "type": "Expression"
+                                    },
+                                    "source_type": {
+                                        "value": "@item().SOURCE_TYPE",
+                                        "type": "Expression"
+                                    },
+                                    "database": {
+                                        "value": "@item().DATABASE",
+                                        "type": "Expression"
+                                    },
+                                    "Table": "it_incident",
+                                    "server": {
+                                        "value": "@item().HOST_NAME",
+                                        "type": "Expression"
+                                    },
+                                    "FilePath_Date": {
+                                        "value": "@coalesce(pipeline().parameters.FilePath_Date,utcNow())",
+                                        "type": "Expression"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "parameters": {
+            "Dataflow_Name": {
+                "type": "string"
+            },
+            "Pipeline_Name": {
+                "type": "string"
+            },
+            "SysDatetime": {
+                "type": "string"
+            },
+            "FilePath_Date": {
+                "type": "string"
+            }
+        },
+        "variables": {
+            "paramname": {
+                "type": "String"
+            },
+            "extract_query": {
+                "type": "String"
+            },
+            "SysDatetime": {
+                "type": "String"
+            },
+            "Sysdate": {
+                "type": "String"
+            }
+        },
+        "folder": {
+            "name": "Generic_Pipelines"
+        },
+        "annotations": []
+    }
+}

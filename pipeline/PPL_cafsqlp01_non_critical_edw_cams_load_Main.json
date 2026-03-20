@@ -1,0 +1,818 @@
+{
+    "name": "PPL_cafsqlp01_non_critical_edw_cams_load_Main",
+    "properties": {
+        "activities": [
+            {
+                "name": "Execute Pipeline1",
+                "type": "ExecutePipeline",
+                "dependsOn": [
+                    {
+                        "activity": "LKP_Fetch Param From SF Table",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "Generic_Indicator_File",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true,
+                    "parameters": {
+                        "P_Indicator_File_Name": "non_critical_1.flg",
+                        "P_Indicator_Path": {
+                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.indicator_path",
+                            "type": "Expression"
+                        },
+                        "P_Indicator_Content": {
+                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.indicator_content",
+                            "type": "Expression"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "Execute Pipeline2",
+                "type": "ExecutePipeline",
+                "dependsOn": [
+                    {
+                        "activity": "LKP_Fetch Param From SF Table",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "Generic_Indicator_File",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true,
+                    "parameters": {
+                        "P_Indicator_File_Name": "non_critical_2.flg",
+                        "P_Indicator_Path": {
+                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.indicator_path",
+                            "type": "Expression"
+                        },
+                        "P_Indicator_Content": {
+                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.indicator_content",
+                            "type": "Expression"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "Execute Pipeline3",
+                "type": "ExecutePipeline",
+                "dependsOn": [
+                    {
+                        "activity": "LKP_Fetch Param From SF Table",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "Generic_Indicator_File",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true,
+                    "parameters": {
+                        "P_Indicator_File_Name": "non_critical_3.flg",
+                        "P_Indicator_Path": {
+                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.indicator_path",
+                            "type": "Expression"
+                        },
+                        "P_Indicator_Content": {
+                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.indicator_content",
+                            "type": "Expression"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "Execute Pipeline4",
+                "type": "ExecutePipeline",
+                "dependsOn": [
+                    {
+                        "activity": "LKP_Fetch Param From SF Table",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "Generic_Indicator_File",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true,
+                    "parameters": {
+                        "P_Indicator_File_Name": "non_critical_4.flg",
+                        "P_Indicator_Path": {
+                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.indicator_path",
+                            "type": "Expression"
+                        },
+                        "P_Indicator_Content": {
+                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.indicator_content",
+                            "type": "Expression"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "Execute Pipeline5",
+                "type": "ExecutePipeline",
+                "dependsOn": [
+                    {
+                        "activity": "LKP_Fetch Param From SF Table",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "Generic_Indicator_File",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true,
+                    "parameters": {
+                        "P_Indicator_File_Name": "non_critical_5.flg",
+                        "P_Indicator_Path": {
+                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.indicator_path",
+                            "type": "Expression"
+                        },
+                        "P_Indicator_Content": {
+                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.indicator_content",
+                            "type": "Expression"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "Until1",
+                "type": "Until",
+                "dependsOn": [
+                    {
+                        "activity": "Execute Pipeline1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@equals(activity('Filter1').output.filteredItemsCount, 1)",
+                        "type": "Expression"
+                    },
+                    "activities": [
+                        {
+                            "name": "Get Metadata",
+                            "type": "GetMetadata",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "dataset": {
+                                    "referenceName": "DS_Generic_edwlanding_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": "indicatorfiles",
+                                        "File_Path": "Param/Edw_Cams",
+                                        "File_Name": "*"
+                                    }
+                                },
+                                "fieldList": [
+                                    "childItems"
+                                ],
+                                "storeSettings": {
+                                    "type": "AzureBlobFSReadSettings",
+                                    "recursive": true,
+                                    "enablePartitionDiscovery": false
+                                },
+                                "formatSettings": {
+                                    "type": "DelimitedTextReadSettings"
+                                }
+                            }
+                        },
+                        {
+                            "name": "Filter1",
+                            "type": "Filter",
+                            "dependsOn": [
+                                {
+                                    "activity": "Get Metadata",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "userProperties": [],
+                            "typeProperties": {
+                                "items": {
+                                    "value": "@activity('Get Metadata').output.childItems",
+                                    "type": "Expression"
+                                },
+                                "condition": {
+                                    "value": "@contains(item().name, 'Ind_wf_cafsqlp01_non_critical_edw_cams_load_1.txt')",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    ],
+                    "timeout": "0.05:00:00"
+                }
+            },
+            {
+                "name": "Until2",
+                "type": "Until",
+                "dependsOn": [
+                    {
+                        "activity": "Execute Pipeline2",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@equals(activity('Filter2').output.filteredItemsCount, 1)",
+                        "type": "Expression"
+                    },
+                    "activities": [
+                        {
+                            "name": "Get Metadata2",
+                            "type": "GetMetadata",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "dataset": {
+                                    "referenceName": "DS_Generic_edwlanding_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": "indicatorfiles",
+                                        "File_Path": "Param/Edw_Cams",
+                                        "File_Name": "*"
+                                    }
+                                },
+                                "fieldList": [
+                                    "childItems"
+                                ],
+                                "storeSettings": {
+                                    "type": "AzureBlobFSReadSettings",
+                                    "recursive": true,
+                                    "enablePartitionDiscovery": false
+                                },
+                                "formatSettings": {
+                                    "type": "DelimitedTextReadSettings"
+                                }
+                            }
+                        },
+                        {
+                            "name": "Filter2",
+                            "type": "Filter",
+                            "dependsOn": [
+                                {
+                                    "activity": "Get Metadata2",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "userProperties": [],
+                            "typeProperties": {
+                                "items": {
+                                    "value": "@activity('Get Metadata2').output.childItems",
+                                    "type": "Expression"
+                                },
+                                "condition": {
+                                    "value": "@contains(item().name, 'Ind_wf_cafsqlp01_non_critical_edw_cams_load_2.txt')",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    ],
+                    "timeout": "0.05:00:00"
+                }
+            },
+            {
+                "name": "Until3",
+                "type": "Until",
+                "dependsOn": [
+                    {
+                        "activity": "Execute Pipeline3",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@equals(activity('Filter3').output.filteredItemsCount, 1)",
+                        "type": "Expression"
+                    },
+                    "activities": [
+                        {
+                            "name": "Get Metadata3",
+                            "type": "GetMetadata",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "dataset": {
+                                    "referenceName": "DS_Generic_edwlanding_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": "indicatorfiles",
+                                        "File_Path": "Param/Edw_Cams",
+                                        "File_Name": "*"
+                                    }
+                                },
+                                "fieldList": [
+                                    "childItems"
+                                ],
+                                "storeSettings": {
+                                    "type": "AzureBlobFSReadSettings",
+                                    "recursive": true,
+                                    "enablePartitionDiscovery": false
+                                },
+                                "formatSettings": {
+                                    "type": "DelimitedTextReadSettings"
+                                }
+                            }
+                        },
+                        {
+                            "name": "Filter3",
+                            "type": "Filter",
+                            "dependsOn": [
+                                {
+                                    "activity": "Get Metadata3",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "userProperties": [],
+                            "typeProperties": {
+                                "items": {
+                                    "value": "@activity('Get Metadata3').output.childItems",
+                                    "type": "Expression"
+                                },
+                                "condition": {
+                                    "value": "@contains(item().name, 'Ind_wf_cafsqlp01_non_critical_edw_cams_load_3.txt')",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    ],
+                    "timeout": "0.05:00:00"
+                }
+            },
+            {
+                "name": "Until4",
+                "type": "Until",
+                "dependsOn": [
+                    {
+                        "activity": "Execute Pipeline4",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@equals(activity('Filter4').output.filteredItemsCount, 1)",
+                        "type": "Expression"
+                    },
+                    "activities": [
+                        {
+                            "name": "Get Metadata4",
+                            "type": "GetMetadata",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "dataset": {
+                                    "referenceName": "DS_Generic_edwlanding_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": "indicatorfiles",
+                                        "File_Path": "Param/Edw_Cams",
+                                        "File_Name": "*"
+                                    }
+                                },
+                                "fieldList": [
+                                    "childItems"
+                                ],
+                                "storeSettings": {
+                                    "type": "AzureBlobFSReadSettings",
+                                    "recursive": true,
+                                    "enablePartitionDiscovery": false
+                                },
+                                "formatSettings": {
+                                    "type": "DelimitedTextReadSettings"
+                                }
+                            }
+                        },
+                        {
+                            "name": "Filter4",
+                            "type": "Filter",
+                            "dependsOn": [
+                                {
+                                    "activity": "Get Metadata4",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "userProperties": [],
+                            "typeProperties": {
+                                "items": {
+                                    "value": "@activity('Get Metadata4').output.childItems",
+                                    "type": "Expression"
+                                },
+                                "condition": {
+                                    "value": "@contains(item().name, 'Ind_wf_cafsqlp01_non_critical_edw_cams_load_4.txt')",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    ],
+                    "timeout": "0.05:00:00"
+                }
+            },
+            {
+                "name": "Until5",
+                "type": "Until",
+                "dependsOn": [
+                    {
+                        "activity": "Execute Pipeline5",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@equals(activity('Filter5').output.filteredItemsCount, 1)",
+                        "type": "Expression"
+                    },
+                    "activities": [
+                        {
+                            "name": "Get Metadata5",
+                            "type": "GetMetadata",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "dataset": {
+                                    "referenceName": "DS_Generic_edwlanding_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": "indicatorfiles",
+                                        "File_Path": "Param/Edw_Cams",
+                                        "File_Name": "*"
+                                    }
+                                },
+                                "fieldList": [
+                                    "childItems"
+                                ],
+                                "storeSettings": {
+                                    "type": "AzureBlobFSReadSettings",
+                                    "recursive": true,
+                                    "enablePartitionDiscovery": false
+                                },
+                                "formatSettings": {
+                                    "type": "DelimitedTextReadSettings"
+                                }
+                            }
+                        },
+                        {
+                            "name": "Filter5",
+                            "type": "Filter",
+                            "dependsOn": [
+                                {
+                                    "activity": "Get Metadata5",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "userProperties": [],
+                            "typeProperties": {
+                                "items": {
+                                    "value": "@activity('Get Metadata5').output.childItems",
+                                    "type": "Expression"
+                                },
+                                "condition": {
+                                    "value": "@contains(item().name, 'Ind_wf_cafsqlp01_non_critical_edw_cams_load_5.txt')",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    ],
+                    "timeout": "0.05:00:00"
+                }
+            },
+            {
+                "name": "Generic_db_replication_ppl",
+                "type": "ExecutePipeline",
+                "dependsOn": [
+                    {
+                        "activity": "Until2",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    },
+                    {
+                        "activity": "Until3",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    },
+                    {
+                        "activity": "Until4",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    },
+                    {
+                        "activity": "Until5",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    },
+                    {
+                        "activity": "Until1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "Generic_db_replication_ppl",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true,
+                    "parameters": {
+                        "Dataflow_Name": "DF_insrt_cmplt_rcrd_it_incident_cafsqlp01_cmxcams_load",
+                        "Pipeline_Name": "PPL_cafsqlp01_non_critical_edw_cams_load_Main",
+                        "SysDatetime": {
+                            "value": "@formatDateTime(pipeline().TriggerTime,'yyyyMMddHHmmss')",
+                            "type": "Expression"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "DF_insrt_cmplt_rcrd_it_incident_cafsqlp01_cmxcams_load",
+                "type": "ExecuteDataFlow",
+                "dependsOn": [
+                    {
+                        "activity": "Generic_db_replication_ppl",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataflow": {
+                        "referenceName": "DF_insrt_cmplt_rcrd_it_incident_cafsqlp01_cmxcams_load",
+                        "type": "DataFlowReference",
+                        "parameters": {
+                            "PMWorkflowRunId": {
+                                "value": "'@{pipeline().RunId}'",
+                                "type": "Expression"
+                            },
+                            "PMWorkflowName": {
+                                "value": "'@{pipeline().Pipeline}'",
+                                "type": "Expression"
+                            },
+                            "Path_Directory": {
+                                "value": "'@{concat('SALES/EDW_CAMS/Microsoft_SQL_Server/PPL_cafsqlp01_non_critical_edw_cams_load_Main/DF_insert_complete_record_it_incident_cafsqlp01_cmxcams_load/', formatDateTime(utcNow(), 'yyyy/MM/dd'))}'",
+                                "type": "Expression"
+                            },
+                            "FileName": {
+                                "value": "'@{'*'}'",
+                                "type": "Expression"
+                            }
+                        },
+                        "datasetParameters": {
+                            "SQitincident": {
+                                "container": "staginglayer",
+                                "directory": "SALES/EDW_CAMS/Microsoft_SQL_Server/PPL_cafsqlp01_non_critical_edw_cams_load_Main/DF_insert_complete_record_it_incident_cafsqlp01_cmxcams_load/2023/05/08",
+                                "file_name": "*",
+                                "compression_type": "None",
+                                "compression_level": "None",
+                                "column_delimeter": ",",
+                                "encoding": "UTF-8",
+                                "escape_character": "\\",
+                                "quote_character": "\"",
+                                "first_row_as_header": true,
+                                "null_value": "\""
+                            },
+                            "TGTitincident": {
+                                "container": "outputlayer",
+                                "directory": "Finance/EDW_Cams/File/PPL_cafsqlp01_non_critical_edw_cams_load_Main/DF_insrt_cmplt_rcrd_it_incident_cafsqlp01_cmxcams_load/WriteBack",
+                                "file_name": "outputFile",
+                                "compression_type": "None",
+                                "compression_level": "None",
+                                "column_delimeter": ",",
+                                "encoding": "UTF-8",
+                                "escape_character": "\\",
+                                "quote_character": "\"",
+                                "first_row_as_header": true,
+                                "null_value": "\""
+                            }
+                        }
+                    },
+                    "compute": {
+                        "coreCount": 8,
+                        "computeType": "General"
+                    },
+                    "traceLevel": "Fine"
+                }
+            },
+            {
+                "name": "Execute_Email",
+                "type": "ExecutePipeline",
+                "dependsOn": [
+                    {
+                        "activity": "DF_insrt_cmplt_rcrd_it_incident_cafsqlp01_cmxcams_load",
+                        "dependencyConditions": [
+                            "Failed"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "PPL_Generic_Email_Framework",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true,
+                    "parameters": {
+                        "Pipeline_Name": {
+                            "value": "@pipeline().Pipeline",
+                            "type": "Expression"
+                        },
+                        "Activity_Name": {
+                            "value": "DF_insrt_cmplt_rcrd_it_incident_cafsqlp01_cmxcams_load",
+                            "type": "Expression"
+                        },
+                        "Status": {
+                            "value": "@activity('DF_insrt_cmplt_rcrd_it_incident_cafsqlp01_cmxcams_load').status",
+                            "type": "Expression"
+                        },
+                        "Start_time": {
+                            "value": "@pipeline().TriggerTime",
+                            "type": "Expression"
+                        },
+                        "Trigger_Type": {
+                            "value": "@pipeline().TriggerType",
+                            "type": "Expression"
+                        },
+                        "Email_Type": "DYNAMIC"
+                    }
+                }
+            },
+            {
+                "name": "LKP_Fetch Param From SF Table",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "SnowflakeSource",
+                        "query": "select\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='source_container' and pipeline_name='PPL_cafsqlp01_non_critical_edw_cams_load_Main' ) as source_container,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Blob_File_Path' and pipeline_name='PPL_cafsqlp01_non_critical_edw_cams_load_Main' ) as Blob_File_Path,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='indicator_path ' and pipeline_name='PPL_cafsqlp01_non_critical_edw_cams_load_Main' ) as indicator_path,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='indicator_content' and pipeline_name='PPL_cafsqlp01_non_critical_edw_cams_load_Main' ) as indicator_content\n",
+                        "exportSettings": {
+                            "type": "SnowflakeExportCopyCommand"
+                        }
+                    },
+                    "dataset": {
+                        "referenceName": "DS_Generic_Snowflake",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "database_name": {
+                                "value": "@pipeline().parameters.database_name",
+                                "type": "Expression"
+                            },
+                            "schema_name": {
+                                "value": "@pipeline().parameters.schemaName",
+                                "type": "Expression"
+                            },
+                            "table_name": {
+                                "value": "@pipeline().parameters.paramtableName",
+                                "type": "Expression"
+                            }
+                        }
+                    }
+                }
+            }
+        ],
+        "parameters": {
+            "database_name": {
+                "type": "string",
+                "defaultValue": "DATAOPS"
+            },
+            "paramtableName": {
+                "type": "string",
+                "defaultValue": "SF_PARAMETERS"
+            },
+            "schemaName": {
+                "type": "string",
+                "defaultValue": "METADATA_CONTROLS"
+            }
+        },
+        "variables": {
+            "File_count": {
+                "type": "String"
+            }
+        },
+        "folder": {
+            "name": "EDW_Cams/Finance"
+        },
+        "annotations": []
+    }
+}

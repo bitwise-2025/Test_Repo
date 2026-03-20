@@ -1,0 +1,479 @@
+{
+    "name": "Generic_replication_inner",
+    "properties": {
+        "activities": [
+            {
+                "name": "SF_Param_Fetch",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "SnowflakeSource",
+                        "query": {
+                            "value": "@concat('select PARAMETER_NAME,PARAMETER_VALUE from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS\nwhere pipeline_name='''\n,pipeline().parameters.pipeline_name,'''',' and dataflow_name='''\n,pipeline().parameters.dataflow_Name,'''')",
+                            "type": "Expression"
+                        },
+                        "exportSettings": {
+                            "type": "SnowflakeExportCopyCommand"
+                        }
+                    },
+                    "dataset": {
+                        "referenceName": "DS_Generic_Snowflake",
+                        "type": "DatasetReference"
+                    },
+                    "firstRowOnly": false
+                }
+            },
+            {
+                "name": "ForEach1",
+                "type": "ForEach",
+                "dependsOn": [
+                    {
+                        "activity": "Extract_query",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('SF_Param_Fetch').output.value",
+                        "type": "Expression"
+                    },
+                    "isSequential": true,
+                    "activities": [
+                        {
+                            "name": "extract_loop",
+                            "type": "SetVariable",
+                            "dependsOn": [],
+                            "policy": {
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "variableName": "param_replace",
+                                "value": {
+                                    "value": "@replace(variables('extract_query'),item().parameter_name , item().Parameter_Value)",
+                                    "type": "Expression"
+                                }
+                            }
+                        },
+                        {
+                            "name": "resolved_loop",
+                            "type": "SetVariable",
+                            "dependsOn": [
+                                {
+                                    "activity": "extract_loop",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "variableName": "extract_query",
+                                "value": {
+                                    "value": "@variables('param_replace')",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "Extract_query",
+                "type": "SetVariable",
+                "dependsOn": [
+                    {
+                        "activity": "SF_Param_Fetch",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "variableName": "extract_query",
+                    "value": {
+                        "value": "@pipeline().parameters.extract_query",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "Switch",
+                "type": "Switch",
+                "dependsOn": [
+                    {
+                        "activity": "ForEach1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "on": {
+                        "value": "@pipeline().parameters.source_type",
+                        "type": "Expression"
+                    },
+                    "cases": [
+                        {
+                            "value": "MSSQL",
+                            "activities": [
+                                {
+                                    "name": "Sql replication_latest",
+                                    "type": "Copy",
+                                    "dependsOn": [],
+                                    "policy": {
+                                        "timeout": "0.12:00:00",
+                                        "retry": 0,
+                                        "retryIntervalInSeconds": 30,
+                                        "secureOutput": false,
+                                        "secureInput": false
+                                    },
+                                    "userProperties": [],
+                                    "typeProperties": {
+                                        "source": {
+                                            "type": "SqlServerSource",
+                                            "sqlReaderQuery": {
+                                                "value": "@variables('extract_query')",
+                                                "type": "Expression"
+                                            },
+                                            "queryTimeout": "02:00:00",
+                                            "partitionOption": "None"
+                                        },
+                                        "sink": {
+                                            "type": "DelimitedTextSink",
+                                            "storeSettings": {
+                                                "type": "AzureBlobFSWriteSettings"
+                                            },
+                                            "formatSettings": {
+                                                "type": "DelimitedTextWriteSettings",
+                                                "quoteAllText": true,
+                                                "fileExtension": ".txt"
+                                            }
+                                        },
+                                        "enableStaging": false,
+                                        "translator": {
+                                            "type": "TabularTranslator",
+                                            "typeConversion": true,
+                                            "typeConversionSettings": {
+                                                "allowDataTruncation": true,
+                                                "treatBooleanAsNumber": false
+                                            }
+                                        }
+                                    },
+                                    "inputs": [
+                                        {
+                                            "referenceName": "DS_Generic_Onprem_SQL",
+                                            "type": "DatasetReference",
+                                            "parameters": {
+                                                "Server": {
+                                                    "value": "@pipeline().parameters.server",
+                                                    "type": "Expression"
+                                                },
+                                                "Database": {
+                                                    "value": "@pipeline().parameters.database",
+                                                    "type": "Expression"
+                                                },
+                                                "Table_name": {
+                                                    "value": "@pipeline().parameters.Table",
+                                                    "type": "Expression"
+                                                },
+                                                "Schema_name": {
+                                                    "value": "@pipeline().parameters.schema_name",
+                                                    "type": "Expression"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "outputs": [
+                                        {
+                                            "referenceName": "DS_Generic_DelimitedFile",
+                                            "type": "DatasetReference",
+                                            "parameters": {
+                                                "File_Path": {
+                                                    "value": "@concat(pipeline().parameters.Filepath,'/',formatDateTime(pipeline().parameters.FilePath_Date,'yyyy/MM/dd'))",
+                                                    "type": "Expression"
+                                                },
+                                                "File_Name": {
+                                                    "value": "@concat(pipeline().parameters.Filename,'_',pipeline().parameters.seq_num,'_',pipeline().parameters.SysDateTime,'.csv')",
+                                                    "type": "Expression"
+                                                },
+                                                "Container": "c1",
+                                                "column_delimeter": ",",
+                                                "encoding": "UTF-8",
+                                                "escape_character": "\\",
+                                                "quote_character": "\""
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "value": "Sybase",
+                            "activities": [
+                                {
+                                    "name": "Sybase replication",
+                                    "type": "Copy",
+                                    "dependsOn": [],
+                                    "policy": {
+                                        "timeout": "0.12:00:00",
+                                        "retry": 0,
+                                        "retryIntervalInSeconds": 30,
+                                        "secureOutput": false,
+                                        "secureInput": false
+                                    },
+                                    "userProperties": [],
+                                    "typeProperties": {
+                                        "source": {
+                                            "type": "OdbcSource",
+                                            "query": {
+                                                "value": "@variables('extract_query')",
+                                                "type": "Expression"
+                                            },
+                                            "queryTimeout": "02:00:00"
+                                        },
+                                        "sink": {
+                                            "type": "DelimitedTextSink",
+                                            "storeSettings": {
+                                                "type": "AzureBlobFSWriteSettings"
+                                            },
+                                            "formatSettings": {
+                                                "type": "DelimitedTextWriteSettings",
+                                                "quoteAllText": true,
+                                                "fileExtension": ".txt"
+                                            }
+                                        },
+                                        "enableStaging": false,
+                                        "translator": {
+                                            "type": "TabularTranslator",
+                                            "typeConversion": true,
+                                            "typeConversionSettings": {
+                                                "allowDataTruncation": true,
+                                                "treatBooleanAsNumber": false
+                                            }
+                                        }
+                                    },
+                                    "inputs": [
+                                        {
+                                            "referenceName": "DS_Generic_Sybase_odbc",
+                                            "type": "DatasetReference",
+                                            "parameters": {
+                                                "database_name": {
+                                                    "value": "@pipeline().parameters.database",
+                                                    "type": "Expression"
+                                                },
+                                                "Server": {
+                                                    "value": "@pipeline().parameters.server",
+                                                    "type": "Expression"
+                                                },
+                                                "table_name": {
+                                                    "value": "@pipeline().parameters.Table",
+                                                    "type": "Expression"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "outputs": [
+                                        {
+                                            "referenceName": "DS_Generic_DelimitedFile",
+                                            "type": "DatasetReference",
+                                            "parameters": {
+                                                "File_Path": {
+                                                    "value": "@concat(pipeline().parameters.Filepath,'/',formatDateTime(pipeline().parameters.FilePath_Date,'yyyy/MM/dd'))",
+                                                    "type": "Expression"
+                                                },
+                                                "File_Name": {
+                                                    "value": "@concat(pipeline().parameters.Filename,'_',pipeline().parameters.seq_num,'_',pipeline().parameters.SysDateTime,'.csv')",
+                                                    "type": "Expression"
+                                                },
+                                                "Container": "c2",
+                                                "column_delimeter": ",",
+                                                "encoding": "UTF-8",
+                                                "escape_character": "\\",
+                                                "quote_character": "\""
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "value": "MYSQL",
+                            "activities": [
+                                {
+                                    "name": "MYSQL replication",
+                                    "type": "Copy",
+                                    "dependsOn": [],
+                                    "policy": {
+                                        "timeout": "0.12:00:00",
+                                        "retry": 0,
+                                        "retryIntervalInSeconds": 30,
+                                        "secureOutput": false,
+                                        "secureInput": false
+                                    },
+                                    "userProperties": [],
+                                    "typeProperties": {
+                                        "source": {
+                                            "type": "MySqlSource",
+                                            "query": {
+                                                "value": "@variables('extract_query')",
+                                                "type": "Expression"
+                                            }
+                                        },
+                                        "sink": {
+                                            "type": "DelimitedTextSink",
+                                            "storeSettings": {
+                                                "type": "AzureBlobFSWriteSettings"
+                                            },
+                                            "formatSettings": {
+                                                "type": "DelimitedTextWriteSettings",
+                                                "quoteAllText": true,
+                                                "fileExtension": ".txt"
+                                            }
+                                        },
+                                        "enableStaging": false,
+                                        "translator": {
+                                            "type": "TabularTranslator",
+                                            "typeConversion": true,
+                                            "typeConversionSettings": {
+                                                "allowDataTruncation": true,
+                                                "treatBooleanAsNumber": false
+                                            }
+                                        }
+                                    },
+                                    "inputs": [
+                                        {
+                                            "referenceName": "DS_Generic_Mysql_Genesys",
+                                            "type": "DatasetReference",
+                                            "parameters": {
+                                                "Server": {
+                                                    "value": "@pipeline().parameters.server",
+                                                    "type": "Expression"
+                                                },
+                                                "Database": {
+                                                    "value": "@pipeline().parameters.database",
+                                                    "type": "Expression"
+                                                },
+                                                "Table": {
+                                                    "value": "@pipeline().parameters.Table",
+                                                    "type": "Expression"
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "outputs": [
+                                        {
+                                            "referenceName": "DS_Generic_DelimitedFile",
+                                            "type": "DatasetReference",
+                                            "parameters": {
+                                                "File_Path": {
+                                                    "value": "@concat(pipeline().parameters.Filepath,'/',formatDateTime(pipeline().parameters.FilePath_Date,'yyyy/MM/dd'))",
+                                                    "type": "Expression"
+                                                },
+                                                "File_Name": {
+                                                    "value": "@concat(pipeline().parameters.Filename,'_',pipeline().parameters.seq_num,'_',pipeline().parameters.SysDateTime,'.csv')",
+                                                    "type": "Expression"
+                                                },
+                                                "Container": "c1",
+                                                "column_delimeter": ",",
+                                                "encoding": "UTF-8",
+                                                "escape_character": "\\",
+                                                "quote_character": "\""
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ],
+        "parameters": {
+            "id": {
+                "type": "string"
+            },
+            "extract_query": {
+                "type": "string"
+            },
+            "pipeline_name": {
+                "type": "string"
+            },
+            "SysDateTime": {
+                "type": "string"
+            },
+            "dataflow_Name": {
+                "type": "string"
+            },
+            "Filepath": {
+                "type": "string"
+            },
+            "Filename": {
+                "type": "string"
+            },
+            "seq_num": {
+                "type": "string"
+            },
+            "source_type": {
+                "type": "string"
+            },
+            "database": {
+                "type": "string"
+            },
+            "Table": {
+                "type": "string",
+                "defaultValue": "delete_log"
+            },
+            "server": {
+                "type": "string"
+            },
+            "schema_name": {
+                "type": "string"
+            },
+            "FilePath_Date": {
+                "type": "string"
+            }
+        },
+        "variables": {
+            "param_replace": {
+                "type": "String"
+            },
+            "extract_query": {
+                "type": "String"
+            },
+            "final": {
+                "type": "String"
+            },
+            "Sysdate": {
+                "type": "String"
+            }
+        },
+        "folder": {
+            "name": "Generic_Pipelines"
+        },
+        "annotations": []
+    }
+}

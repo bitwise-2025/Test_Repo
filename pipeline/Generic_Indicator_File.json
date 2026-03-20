@@ -1,0 +1,274 @@
+{
+    "name": "Generic_Indicator_File",
+    "properties": {
+        "activities": [
+            {
+                "name": "If Condition1",
+                "type": "IfCondition",
+                "dependsOn": [],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@equals(toUpper(pipeline().parameters.is_indicator_on_prem),'Y')",
+                        "type": "Expression"
+                    },
+                    "ifFalseActivities": [
+                        {
+                            "name": "Indicator Files_blob",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "DelimitedTextSource",
+                                    "additionalColumns": [
+                                        {
+                                            "name": "IndicatorContent",
+                                            "value": {
+                                                "value": "@pipeline().parameters.P_Indicator_Content",
+                                                "type": "Expression"
+                                            }
+                                        }
+                                    ],
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSReadSettings",
+                                        "recursive": true,
+                                        "enablePartitionDiscovery": false
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextReadSettings"
+                                    }
+                                },
+                                "sink": {
+                                    "type": "DelimitedTextSink",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSWriteSettings"
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextWriteSettings",
+                                        "quoteAllText": true,
+                                        "fileExtension": ".txt"
+                                    }
+                                },
+                                "enableStaging": false,
+                                "translator": {
+                                    "type": "TabularTranslator",
+                                    "mappings": [
+                                        {
+                                            "source": {
+                                                "name": "IndicatorContent",
+                                                "type": "String"
+                                            },
+                                            "sink": {
+                                                "type": "String",
+                                                "physicalType": "String",
+                                                "ordinal": 1
+                                            }
+                                        }
+                                    ],
+                                    "typeConversion": true,
+                                    "typeConversionSettings": {
+                                        "allowDataTruncation": true,
+                                        "treatBooleanAsNumber": false
+                                    }
+                                }
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "DS_Generic_Indicator_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "P_Container": {
+                                            "value": "@pipeline().parameters.P_Indicator_Content",
+                                            "type": "Expression"
+                                        },
+                                        "P_Directory": {
+                                            "value": "@variables('V_Common_Source_Path')",
+                                            "type": "Expression"
+                                        },
+                                        "P_File_Name": {
+                                            "value": "@variables('V_Common_Source_File_Name')",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "DS_Generic_Indicator_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "P_Container": {
+                                            "value": "@pipeline().parameters.P_Indicator_Path",
+                                            "type": "Expression"
+                                        },
+                                        "P_Directory": {
+                                            "value": "@pipeline().parameters.P_Indicator_Path",
+                                            "type": "Expression"
+                                        },
+                                        "P_File_Name": {
+                                            "value": "@pipeline().parameters.P_Indicator_File_Name",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "ifTrueActivities": [
+                        {
+                            "name": "Indicator Files_onprem",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "DelimitedTextSource",
+                                    "additionalColumns": [
+                                        {
+                                            "name": "IndicatorContent",
+                                            "value": {
+                                                "value": "@pipeline().parameters.P_Indicator_Content",
+                                                "type": "Expression"
+                                            }
+                                        }
+                                    ],
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSReadSettings",
+                                        "recursive": true,
+                                        "enablePartitionDiscovery": false
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextReadSettings"
+                                    }
+                                },
+                                "sink": {
+                                    "type": "DelimitedTextSink",
+                                    "storeSettings": {
+                                        "type": "FileServerWriteSettings"
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextWriteSettings",
+                                        "quoteAllText": true,
+                                        "fileExtension": ".txt"
+                                    }
+                                },
+                                "enableStaging": false,
+                                "translator": {
+                                    "type": "TabularTranslator",
+                                    "mappings": [
+                                        {
+                                            "source": {
+                                                "name": "IndicatorContent",
+                                                "type": "String"
+                                            },
+                                            "sink": {
+                                                "physicalType": "String",
+                                                "ordinal": 1
+                                            }
+                                        }
+                                    ],
+                                    "typeConversion": true,
+                                    "typeConversionSettings": {
+                                        "allowDataTruncation": true,
+                                        "treatBooleanAsNumber": false
+                                    }
+                                }
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "DS_Generic_Indicator_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "P_Container": {
+                                            "value": "@pipeline().parameters.is_indicator_on_prem",
+                                            "type": "Expression"
+                                        },
+                                        "P_Directory": {
+                                            "value": "@variables('V_Common_Source_Path')",
+                                            "type": "Expression"
+                                        },
+                                        "P_File_Name": {
+                                            "value": "@variables('V_Common_Source_File_Name')",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "DS_onprem_Delimeter",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Folder_path": {
+                                            "value": "@pipeline().parameters.P_Indicator_Path",
+                                            "type": "Expression"
+                                        },
+                                        "file_name": {
+                                            "value": "@pipeline().parameters.P_Indicator_File_Name",
+                                            "type": "Expression"
+                                        },
+                                        "Host": {
+                                            "value": "@pipeline().Pipeline",
+                                            "type": "Expression"
+                                        },
+                                        "first_row_as_header": true,
+                                        "Column_Delimiter": ","
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ],
+        "parameters": {
+            "P_Indicator_File_Name": {
+                "type": "string"
+            },
+            "P_Indicator_Path": {
+                "type": "string"
+            },
+            "P_Indicator_Content": {
+                "type": "string",
+                "defaultValue": "Success"
+            },
+            "is_indicator_on_prem": {
+                "type": "string",
+                "defaultValue": "Y"
+            }
+        },
+        "variables": {
+            "V_Container": {
+                "type": "String",
+                "defaultValue": "indicatorfiles"
+            },
+            "V_Common_Source_File_Name": {
+                "type": "String",
+                "defaultValue": "CommonIndicatorFile.txt"
+            },
+            "V_Common_Source_Path": {
+                "type": "String",
+                "defaultValue": "commonsource"
+            }
+        },
+        "folder": {
+            "name": "Generic_Pipelines"
+        },
+        "annotations": []
+    }
+}
