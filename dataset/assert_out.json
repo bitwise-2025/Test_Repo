@@ -1,0 +1,45 @@
+{
+    "name": "assert_out",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureSqlDatabase1",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [
+            {
+                "name": "id",
+                "type": "int",
+                "precision": 10
+            },
+            {
+                "name": "name",
+                "type": "nvarchar"
+            },
+            {
+                "name": "age",
+                "type": "int",
+                "precision": 10
+            },
+            {
+                "name": "dept",
+                "type": "nvarchar"
+            },
+            {
+                "name": "location_id",
+                "type": "int",
+                "precision": 10
+            },
+            {
+                "name": "location_name",
+                "type": "nvarchar"
+            }
+        ],
+        "typeProperties": {
+            "schema": "dbo",
+            "table": "assert_out"
+        }
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}

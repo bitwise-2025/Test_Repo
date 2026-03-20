@@ -1,0 +1,221 @@
+{
+    "name": "AggregateFile",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureBlobStorage1",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "dsnbdsanba": {
+                "type": "string",
+                "defaultValue": "kfdskjbdsf"
+            }
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobStorageLocation",
+                "container": {
+                    "value": "datafactorypoccontainer",
+                    "type": "Expression"
+                }
+            },
+            "columnDelimiter": {
+                "value": "@dataset().dsnbdsanba",
+                "type": "Expression"
+            },
+            "rowDelimiter": "\n",
+            "compressionCodec": "gzip",
+            "compressionLevel": "Optimal",
+            "escapeChar": "\\",
+            "firstRowAsHeader": true,
+            "quoteChar": "",
+            "schema": null,
+            "table": null
+        },
+        "schema": [
+            {
+                "name": "sto_id",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "day_id",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "bgn_wek_day_id",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "wek_id",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "pid_id",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "qtr_id",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "etl_btc_id",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "gre_am",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "red_am",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "mbnk_sum_que_lth_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "mbnk_avg_que_lth_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "mbnk_pek_que_lth_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "mbnk_avg_wtm_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "mbnk_pek_wtm_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "mbnk_avg_opn_lan_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "mbnk_sum_opn_lan_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "mbnk_avg_bskt_cko_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "mbnk_sum_bskt_cko_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "xps_avg_que_lth_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "xps_avg_wtm_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "xps_avg_opn_lan_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "xps_avg_bskt_cko_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "avg_cus_sto_etr_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "avg_cse_utl_am",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "avg_smr_frc_lan_opn_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "sum_smr_frc_lan_opn_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "avg_raw_frc_opn_lan_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "one_plus_one_comp_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "one_plus_two_comp_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "cus_cnt_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "und_man_hrs_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "ovr_man_hrs_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "que_0_5_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "que_1_0_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "que_1_5_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "que_2_0_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "que_2_5_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "que_3_0_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "que_3_5_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "que_4_0_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "que_4_5_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "row_add_ts",
+                "type": "string"
+            },
+            {
+                "name": "one_plus_tre_comp_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "gre_qy",
+                "type": "decimal(0,0)"
+            },
+            {
+                "name": "red_qy",
+                "type": "decimal(0,0)"
+            }
+        ]
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}

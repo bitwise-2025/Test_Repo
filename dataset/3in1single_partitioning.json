@@ -1,0 +1,16 @@
+{
+    "name": "3in1single_partitioning",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureSqlDatabase2",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [],
+        "typeProperties": {
+            "schema": "dbo",
+            "table": "Dates"
+        }
+    }
+}

@@ -1,0 +1,48 @@
+{
+    "name": "AdditionalSalesData1",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureBlobStorage1",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobStorageLocation",
+                "fileName": "AdditionalSalesData.csv",
+                "container": "pocdatafcatory"
+            },
+            "columnDelimiter": {
+                "value": "@string(6)",
+                "type": "Expression"
+            },
+            "escapeChar": "\\",
+            "firstRowAsHeader": true,
+            "quoteChar": "\""
+        },
+        "schema": [
+            {
+                "name": "TransactionID",
+                "type": "String"
+            },
+            {
+                "name": "CustomerID",
+                "type": "String"
+            },
+            {
+                "name": "ProductID",
+                "type": "String"
+            },
+            {
+                "name": "SalesAmount",
+                "type": "String"
+            },
+            {
+                "name": "TransactionDate",
+                "type": "String"
+            }
+        ]
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}

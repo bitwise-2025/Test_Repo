@@ -1,0 +1,17 @@
+{
+    "name": "Json10",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "sasynapsecse",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "Json",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation"
+            }
+        },
+        "schema": {}
+    }
+}

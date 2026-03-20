@@ -1,0 +1,40 @@
+{
+    "name": "powerquery",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureBlobStorage1",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobStorageLocation",
+                "fileName": "EmpDetails.csv",
+                "container": "nisha"
+            },
+            "columnDelimiter": ",",
+            "escapeChar": "\\",
+            "firstRowAsHeader": true,
+            "quoteChar": "\""
+        },
+        "schema": [
+            {
+                "name": "Id",
+                "type": "String"
+            },
+            {
+                "name": "Emp",
+                "type": "String"
+            },
+            {
+                "name": "Salary",
+                "type": "String"
+            },
+            {
+                "name": "Dept",
+                "type": "String"
+            }
+        ]
+    }
+}

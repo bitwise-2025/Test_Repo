@@ -1,0 +1,33 @@
+{
+    "name": "assert_out_tbl",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "AzureSqlDatabase1",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "SCHEMA": {
+                "type": "string",
+                "defaultValue": "schema"
+            },
+            "TABLE": {
+                "type": "string",
+                "defaultValue": "table"
+            }
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [],
+        "typeProperties": {
+            "schema": {
+                "value": "@dataset().SCHEMA",
+                "type": "Expression"
+            },
+            "table": {
+                "value": "@dataset().TABLE",
+                "type": "Expression"
+            }
+        }
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}
