@@ -1,0 +1,30 @@
+{
+	"name": "ppl_dedicated_sql_pool_copy1",
+	"properties": {
+		"activities": [
+			{
+				"name": "SQL pool stored procedure1",
+				"type": "SqlPoolStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"sqlPool": {
+					"referenceName": "Sql_pool_test",
+					"type": "SqlPoolReference"
+				},
+				"typeProperties": {
+					"storedProcedureName": "sum"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-11-17T06:54:20Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

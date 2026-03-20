@@ -1,0 +1,22 @@
+{
+	"name": "AzureSynapseAnalytics1",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDW",
+		"typeProperties": {
+			"server": "tcp:test-workspaceny.sql.azuresynapse.net,1433",
+			"database": "Sql_pool_test",
+			"encrypt": "True",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "sqladminuser",
+			"multipleActiveResultSets": "False",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIlNZTkFQU0VANjE4NkYzNUYtOEZCRi00NTY2LTkwQzEtREVDNzJDRkU3QTE2X2NkNWE2NDkzLWYwNTctNDRjYi05YjAwLTdkOWRjODEyNjNkYyINCn0="
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

@@ -1,0 +1,19 @@
+{
+	"name": "sql_dedicated_pool",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDW",
+		"typeProperties": {
+			"server": "test-workspaceny.sql.azuresynapse.net",
+			"database": "Sql_pool_test",
+			"encrypt": "optional",
+			"trustServerCertificate": false,
+			"authenticationType": "SystemAssignedManagedIdentity"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 2",
+	"properties": {
+		"content": {
+			"query": "\nCREATE TABLE [dbo].[FactInternetSales]\n(\n    ProductKey INT NOT NULL,\n    OrderDateKey INT NOT NULL,\n    CustomerKey INT NOT NULL,\n    SalesAmount DECIMAL(18, 2) NOT NULL\n)\nWITH\n(\n    DISTRIBUTION = HASH(ProductKey),\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "Sql_pool_test",
+				"poolName": "Sql_pool_test"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

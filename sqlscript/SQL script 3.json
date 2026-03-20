@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 3",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP (100) [ProductKey]\n,[OrderDateKey]\n,[CustomerKey]\n,[SalesAmount]\n FROM [dbo].[FactInternetSales]\n\n\n INSERT INTO dbo.FactInternetSales\n(\n    ProductKey,\n    OrderDateKey,\n    CustomerKey,\n    SalesAmount\n)\nVALUES\n(\n    1001,          -- ProductKey\n    20251029,      -- OrderDateKey (e.g., YYYYMMDD format)\n    501,           -- CustomerKey\n    199.99         -- SalesAmount\n);\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "Sql_pool_test",
+				"poolName": "Sql_pool_test"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
