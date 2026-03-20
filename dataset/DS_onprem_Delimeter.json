@@ -1,0 +1,65 @@
+{
+    "name": "DS_onprem_Delimeter",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "fileshare_sales_onprem",
+            "type": "LinkedServiceReference",
+            "parameters": {
+                "Host": {
+                    "value": "@dataset().Host",
+                    "type": "Expression"
+                }
+            }
+        },
+        "parameters": {
+            "Folder_path": {
+                "type": "string"
+            },
+            "file_name": {
+                "type": "string"
+            },
+            "Host": {
+                "type": "string",
+                "defaultValue": "\\\\edwinffsvp13\\EDW_Infa_File_Share"
+            },
+            "first_row_as_header": {
+                "type": "bool",
+                "defaultValue": true
+            },
+            "Column_Delimiter": {
+                "type": "string",
+                "defaultValue": ","
+            }
+        },
+        "folder": {
+            "name": "Others"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+            "location": {
+                "type": "FileServerLocation",
+                "fileName": {
+                    "value": "@dataset().file_name",
+                    "type": "Expression"
+                },
+                "folderPath": {
+                    "value": "@dataset().Folder_path",
+                    "type": "Expression"
+                }
+            },
+            "columnDelimiter": {
+                "value": "@dataset().Column_Delimiter",
+                "type": "Expression"
+            },
+            "escapeChar": "\\",
+            "firstRowAsHeader": {
+                "value": "@dataset().first_row_as_header",
+                "type": "Expression"
+            },
+            "quoteChar": "\""
+        },
+        "schema": []
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}

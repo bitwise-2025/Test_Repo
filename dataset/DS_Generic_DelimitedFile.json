@@ -1,0 +1,76 @@
+{
+    "name": "DS_Generic_DelimitedFile",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "edwsaleslanding",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "File_Path": {
+                "type": "string"
+            },
+            "File_Name": {
+                "type": "string"
+            },
+            "Container": {
+                "type": "string"
+            },
+            "column_delimeter": {
+                "type": "string",
+                "defaultValue": ","
+            },
+            "encoding": {
+                "type": "string",
+                "defaultValue": "UTF-8"
+            },
+            "escape_character": {
+                "type": "string",
+                "defaultValue": "\\"
+            },
+            "quote_character": {
+                "type": "string",
+                "defaultValue": "\""
+            }
+        },
+        "folder": {
+            "name": "Generic Datasets"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "fileName": {
+                    "value": "@dataset().File_Name",
+                    "type": "Expression"
+                },
+                "folderPath": {
+                    "value": "@dataset().File_Path",
+                    "type": "Expression"
+                },
+                "fileSystem": {
+                    "value": "@dataset().Container",
+                    "type": "Expression"
+                }
+            },
+            "columnDelimiter": {
+                "value": "@dataset().column_delimeter",
+                "type": "Expression"
+            },
+            "encodingName": {
+                "value": "@dataset().encoding",
+                "type": "Expression"
+            },
+            "escapeChar": {
+                "value": "@dataset().escape_character",
+                "type": "Expression"
+            },
+            "firstRowAsHeader": true,
+            "quoteChar": {
+                "value": "@dataset().quote_character",
+                "type": "Expression"
+            }
+        },
+        "schema": []
+    }
+}

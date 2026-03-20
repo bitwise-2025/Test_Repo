@@ -1,0 +1,41 @@
+{
+    "name": "DS_Generic_Mysql_Genesys",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "mysql_genesys_cloud",
+            "type": "LinkedServiceReference",
+            "parameters": {
+                "server": {
+                    "value": "@dataset().Server",
+                    "type": "Expression"
+                },
+                "database": {
+                    "value": "@dataset().Database",
+                    "type": "Expression"
+                }
+            }
+        },
+        "parameters": {
+            "Server": {
+                "type": "string",
+                "defaultValue": "usw2.mysql.genesysclouddatabase.com"
+            },
+            "Database": {
+                "type": "string",
+                "defaultValue": "PureCloud"
+            },
+            "Table": {
+                "type": "string"
+            }
+        },
+        "annotations": [],
+        "type": "MySqlTable",
+        "schema": [],
+        "typeProperties": {
+            "tableName": {
+                "value": "@dataset().Table",
+                "type": "Expression"
+            }
+        }
+    }
+}

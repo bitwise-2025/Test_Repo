@@ -1,0 +1,46 @@
+{
+    "name": "DS_Generic_Indicator_File",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "edwsaleslanding",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "P_Container": {
+                "type": "string"
+            },
+            "P_Directory": {
+                "type": "string"
+            },
+            "P_File_Name": {
+                "type": "string"
+            }
+        },
+        "folder": {
+            "name": "Generic Datasets"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "fileName": {
+                    "value": "@dataset().P_File_Name",
+                    "type": "Expression"
+                },
+                "folderPath": {
+                    "value": "@dataset().P_Directory",
+                    "type": "Expression"
+                },
+                "fileSystem": {
+                    "value": "@dataset().P_Container",
+                    "type": "Expression"
+                }
+            },
+            "columnDelimiter": ",",
+            "escapeChar": "",
+            "quoteChar": ""
+        },
+        "schema": []
+    }
+}

@@ -1,0 +1,42 @@
+{
+    "name": "DS_Generic_Sybase_odbc",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "sybase_odbc",
+            "type": "LinkedServiceReference",
+            "parameters": {
+                "database": {
+                    "value": "@dataset().database_name",
+                    "type": "Expression"
+                },
+                "server": {
+                    "value": "@dataset().Server",
+                    "type": "Expression"
+                }
+            }
+        },
+        "parameters": {
+            "database_name": {
+                "type": "string"
+            },
+            "Server": {
+                "type": "string"
+            },
+            "table_name": {
+                "type": "string"
+            }
+        },
+        "folder": {
+            "name": "Generic Datasets"
+        },
+        "annotations": [],
+        "type": "OdbcTable",
+        "schema": [],
+        "typeProperties": {
+            "tableName": {
+                "value": "@dataset().table_name",
+                "type": "Expression"
+            }
+        }
+    }
+}

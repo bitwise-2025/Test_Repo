@@ -1,0 +1,49 @@
+{
+    "name": "DS_Generic_Onprem_SQL",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "onprem_mssql",
+            "type": "LinkedServiceReference",
+            "parameters": {
+                "server": {
+                    "value": "@dataset().Server",
+                    "type": "Expression"
+                },
+                "database": {
+                    "value": "@dataset().Database",
+                    "type": "Expression"
+                }
+            }
+        },
+        "parameters": {
+            "Server": {
+                "type": "string"
+            },
+            "Database": {
+                "type": "string"
+            },
+            "Table_name": {
+                "type": "string"
+            },
+            "Schema_name": {
+                "type": "string"
+            }
+        },
+        "folder": {
+            "name": "Generic Datasets"
+        },
+        "annotations": [],
+        "type": "SqlServerTable",
+        "schema": [],
+        "typeProperties": {
+            "schema": {
+                "value": "@dataset().Schema_name",
+                "type": "Expression"
+            },
+            "table": {
+                "value": "@dataset().Table_name",
+                "type": "Expression"
+            }
+        }
+    }
+}
