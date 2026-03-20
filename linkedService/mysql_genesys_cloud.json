@@ -1,0 +1,28 @@
+{
+    "name": "mysql_genesys_cloud",
+    "properties": {
+        "parameters": {
+            "server": {
+                "type": "string",
+                "defaultValue": "usw2.mysql.genesysclouddatabase.com"
+            },
+            "database": {
+                "type": "string",
+                "defaultValue": "PureCloud"
+            }
+        },
+        "annotations": [],
+        "type": "MySql",
+        "typeProperties": {
+            "connectionString": "Server=@{linkedService().server};Port=3306;Database=@{linkedService().database};User=etl_sandbox@carmax.com;SSLMode=1;UseSystemTrustStore=0",
+            "password": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_sales",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "genesys-mysql-password"
+            }
+        }
+    }
+}

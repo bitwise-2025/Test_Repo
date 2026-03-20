@@ -1,0 +1,38 @@
+{
+    "name": "sybase_odbc",
+    "type": "Microsoft.DataFactory/factories/linkedservices",
+    "properties": {
+        "parameters": {
+            "database": {
+                "type": "string",
+                "defaultValue": "cr"
+            },
+            "server": {
+                "type": "string",
+                "defaultValue": "suburban"
+            }
+        },
+        "annotations": [],
+        "type": "Odbc",
+        "typeProperties": {
+            "connectionString": "@{concat(concat('Driver={Adaptive Server Enterprise};server=',linkedService().server),';port=1300;Charset=ClientDefault;CodepageType=other;ClientCharSet=iso_1;Database=',linkedService().database)}",
+            "authenticationType": "Basic",
+            "userName": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_shared",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "db-svcedwadfetldb-sybaseuser"
+            },
+            "password": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_shared",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "db-svcedwadfetldb-password"
+            }
+        }
+    }
+}

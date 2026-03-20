@@ -1,0 +1,37 @@
+{
+    "name": "onprem_mssql",
+    "type": "Microsoft.DataFactory/factories/linkedservices",
+    "properties": {
+        "parameters": {
+            "server": {
+                "type": "string",
+                "defaultValue": "HRSGENSQLQ21"
+            },
+            "database": {
+                "type": "string",
+                "defaultValue": "adp_hr"
+            }
+        },
+        "annotations": [],
+        "type": "SqlServer",
+        "typeProperties": {
+            "connectionString": "Integrated Security=True;Data Source=@{linkedService().server};Initial Catalog=@{linkedService().database}",
+            "userName": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_shared",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "db-svcedwadfetldb-user"
+            },
+            "password": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_shared",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "db-svcedwadfetldb-password"
+            }
+        }
+    }
+}
