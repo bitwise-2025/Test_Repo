@@ -1,0 +1,40 @@
+{
+    "name": "DS_Generic_blob_edwsaleslanding_DelimitedText_ReadMultiFiles",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "edwsaleslanding",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "Container": {
+                "type": "string"
+            },
+            "file_path": {
+                "type": "string"
+            }
+        },
+        "folder": {
+            "name": "Generic Datasets"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "folderPath": {
+                    "value": "@dataset().file_path",
+                    "type": "Expression"
+                },
+                "fileSystem": {
+                    "value": "@dataset().Container",
+                    "type": "Expression"
+                }
+            },
+            "columnDelimiter": ",",
+            "escapeChar": "\\",
+            "firstRowAsHeader": true,
+            "quoteChar": "\""
+        },
+        "schema": []
+    }
+}
