@@ -1,0 +1,429 @@
+{
+    "name": "Acxiom_Data1_Without_Hdr_Conv_With_Split",
+    "properties": {
+        "folder": {
+            "name": "3rdParty/Acxiom"
+        },
+        "nbformat": 4,
+        "nbformat_minor": 2,
+        "bigDataPool": {
+            "referenceName": "acxiomsparkpool",
+            "type": "BigDataPoolReference"
+        },
+        "sessionProperties": {
+            "driverMemory": "56g",
+            "driverCores": 8,
+            "executorMemory": "56g",
+            "executorCores": 8,
+            "numExecutors": 1,
+            "conf": {
+                "spark.dynamicAllocation.enabled": "true",
+                "spark.dynamicAllocation.minExecutors": "1",
+                "spark.dynamicAllocation.maxExecutors": "4",
+                "spark.autotune.trackingId": "363c67b8-4bd6-4a70-b30e-a2ef9eb1da31"
+            }
+        },
+        "metadata": {
+            "saveOutput": true,
+            "enableDebugMode": false,
+            "kernelspec": {
+                "name": "synapse_pyspark",
+                "display_name": "Synapse PySpark"
+            },
+            "language_info": {
+                "name": "python"
+            },
+            "a365ComputeOptions": {
+                "id": "/subscriptions/20d22ffe-b0c3-4d31-a3fe-ca732304439f/resourceGroups/Prod_DataEstate/providers/Microsoft.Synapse/workspaces/prod-hsp-synapse-workspace/bigDataPools/acxiomsparkpool",
+                "name": "acxiomsparkpool",
+                "type": "Spark",
+                "endpoint": "https://prod-hsp-synapse-workspace.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/acxiomsparkpool",
+                "auth": {
+                    "type": "AAD",
+                    "authResource": "https://dev.azuresynapse.net"
+                },
+                "sparkVersion": "3.1",
+                "nodeCount": 3,
+                "cores": 16,
+                "memory": 112
+            },
+            "sessionKeepAliveTimeout": 30
+        },
+        "cells": [
+            {
+                "cell_type": "code",
+                "source": [
+                    "from pyspark.sql.types import *\r\n",
+                    "from pyspark.sql.functions import *\r\n",
+                    "import re\r\n",
+                    "from pyspark.sql.window import *\r\n",
+                    "\r\n",
+                    ""
+                ],
+                "outputs": [],
+                "execution_count": 1
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    }
+                },
+                "source": [
+                    "%run utility_functions"
+                ],
+                "outputs": [],
+                "execution_count": null
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    }
+                },
+                "source": [
+                    "df = spark.read.load('abfss://prodhspsynapsefs@prodhspsynapsedls.dfs.core.windows.net/bronze/3rdparty/acxiom/NOVA_Install_pkg1_*.parquet', format='parquet')\r\n",
+                    "\r\n",
+                    "\r\n",
+                    ""
+                ],
+                "outputs": [],
+                "execution_count": 2
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    },
+                    "collapsed": false
+                },
+                "source": [
+                    "#import pandas as pd\r\n",
+                    "\r\n",
+                    "\r\n",
+                    "#spark.conf.set(\"spark.sql.execution.arrow.enabled\", \"true\")\r\n",
+                    "#pandasDF = dfcolumns.toPandas()\r\n",
+                    "#for index, row in pandasDF.iterrows():\r\n",
+                    "#    df = df.withColumnRenamed(row['HeaderName'],row['Name'].replace(r',','').replace(' ','_').replace(',','').replace(';','').replace('{','').replace('}','').replace('(','').replace(')','').replace('_-_','_').replace('input.','').replace('concat.','') )\r\n",
+                    "\r\n",
+                    "#df=df.select([when(col(c)==\"undefined\",None).otherwise(col(c)).alias(c) for c in df.columns])\r\n",
+                    "#print(df.columns)\r\n",
+                    "\r\n",
+                    "\r\n",
+                    "updatedcols = {}\r\n",
+                    "for index in df.columns:\r\n",
+                    "    #print(index)\r\n",
+                    "    if '.' in index:\r\n",
+                    "        updatedcols[index] = index.replace('.','_')\r\n",
+                    "\r\n",
+                    "#print(updatedcols)\r\n",
+                    "\r\n",
+                    "for item in updatedcols:\r\n",
+                    "    #print(updatedcols[item])\r\n",
+                    "    df = df.withColumnRenamed(item,updatedcols[item])\r\n",
+                    "\r\n",
+                    "#display(df.limit(10))\r\n",
+                    "#df=df.select([when(col(c)==\"undefined\",None).otherwise(col(c)).alias(c) for c in df.columns])\r\n",
+                    "#display(df.limit(10))\r\n",
+                    "\r\n",
+                    "#print(df.columns)\r\n",
+                    ""
+                ],
+                "outputs": [],
+                "execution_count": 3
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    },
+                    "collapsed": false
+                },
+                "source": [
+                    "for col_name in ['INPUT_FIRST_NAME_3131', 'INPUT_LAST_NAME_3131']:\r\n",
+                    "    df = (\r\n",
+                    "        df\r\n",
+                    "        .withColumn(col_name,\r\n",
+                    "                    lower(regexp_replace(trim(col(col_name)), r'[^a-zA-Z0-9- ]', '')).alias(col_name))\r\n",
+                    "    )\r\n",
+                    ""
+                ],
+                "outputs": [],
+                "execution_count": 4
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    }
+                },
+                "source": [
+                    "address_dict = {'#':'','number':'','avenue':'ave','boulevard':'blvd',\r\n",
+                    "                'center':'ctr','circle':'cir','court':'ct','drive':'dr', 'crst': 'crest',\r\n",
+                    "                'expressway':'expy','heights':'hts','highway':'hwy','island':'is',\r\n",
+                    "                'junction':'jct','lake':'lk','lane':'ln','mountain':'mtn',\r\n",
+                    "                'parkway':'pkwy','place':'pl','plaza':'plz','ridge':'rdg',\r\n",
+                    "                'road':'rd','square':'sq','street':'st','station':'sta',\r\n",
+                    "                'terrace':'ter','trail':'trl','turnpike':'tpke','valley':'vly',\r\n",
+                    "                'apartment':'apt','room':'rm','suite':'ste','north':'n','east':'e',\r\n",
+                    "                'south':'s','west':'w','north east':'ne','north west':'nw',\r\n",
+                    "                'south east':'se','south west':'sw','northeast':'ne',\r\n",
+                    "                'northwest':'nw','southeast':'se','southwest':'sw'}"
+                ],
+                "outputs": [],
+                "execution_count": 5
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    },
+                    "collapsed": false
+                },
+                "source": [
+                    "for col_name in ['CONCAT_ADDRESS']:\r\n",
+                    "    \r\n",
+                    "    # Map all transformations\r\n",
+                    "    col_exprs = [regexp_replace(col(col_name), raw, standardized).alias(col_name) for raw, standardized in address_dict.items()]\r\n",
+                    "    \r\n",
+                    "    # Apply to column\r\n",
+                    "    for ce in col_exprs:\r\n",
+                    "        df = df.withColumn(col_name, ce)\r\n",
+                    ""
+                ],
+                "outputs": [],
+                "execution_count": 6
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    },
+                    "collapsed": false
+                },
+                "source": [
+                    "#display(df.limit(10))\r\n",
+                    ""
+                ],
+                "outputs": [],
+                "execution_count": 7
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    }
+                },
+                "source": [
+                    "#print(create_match_key_acxiom('alice','taylor','22042','538 44TH ST','3','11'))\r\n",
+                    "#print(re.search(r'\\b[a-zA-Z]+\\b', '538 44TH ST 3 11'))\r\n",
+                    ""
+                ],
+                "outputs": [],
+                "execution_count": 9
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    },
+                    "collapsed": false
+                },
+                "source": [
+                    "#df = df.withColumn(\"MatchKey\",concat_ws(\"-\",\r\n",
+                    "#lower(substring(\"First_Name_3131\",1,1)),lower((\"Last_Name_3131\").split()[-1]),lower(regexp_extract('`CONCAT.ADDRESS`', r'[0-9]+',0)),\r\n",
+                    "#lower(regexp_extract('`CONCAT.ADDRESS`', r'[a-zA-Z]+\\b',0)),lower(\"Zip_Code_3043\")))\r\n",
+                    "\r\n",
+                    "#display(df.limit(10))\r\n",
+                    "\r\n",
+                    "\r\n",
+                    "#acxiom_match_keys = (\r\n",
+                    "\r\n",
+                    "#df = (\r\n",
+                    "#  df\r\n",
+                    "#  .withColumn('MatchKey', match_key_udf('INPUT_FIRST_NAME_3131', 'INPUT_LAST_NAME_3131', \r\n",
+                    "#                                         'INPUT_ZIP_CODE_3043', 'CONCAT_ADDRESS'))\r\n",
+                    "#  .filter(\"MatchKey is not NULL\")\r\n",
+                    "#  .filter(\"MatchKey not like '% %' and MatchKey not like '%--%'\")\r\n",
+                    "#  .distinct()\r\n",
+                    "\r\n",
+                    " # Add row number by group in case of match key mapping to multiple l2 ids\r\n",
+                    " #.withColumn(\"match_key_row_number\", \r\n",
+                    " #            row_number()\r\n",
+                    " #            .over(Window.partitionBy(\"MatchKey\").orderBy(\"RECORD_KEY_10051\")))\r\n",
+                    "#)\r\n",
+                    "\r\n",
+                    "#display(acxiom_match_keys.limit(10))\r\n",
+                    "\r\n",
+                    "# Find match keys that map to multiple record keys\r\n",
+                    "#dup_match_keys = (\r\n",
+                    "#    acxiom_match_keys\r\n",
+                    "#    .filter('match_key_row_number > 1')\r\n",
+                    "#    .select('RECORD_KEY_10051')\r\n",
+                    "#    .distinct()\r\n",
+                    "#)\r\n",
+                    "\r\n",
+                    "df = (\r\n",
+                    "  df\r\n",
+                    "  .withColumn('INPUT_STATE_3038_1', col('INPUT_STATE_3038'))\r\n",
+                    ")"
+                ],
+                "outputs": [],
+                "execution_count": 10
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    },
+                    "collapsed": false
+                },
+                "source": [
+                    "\r\n",
+                    "#df = (\r\n",
+                    "# acxiom_match_keys\r\n",
+                    "# .join(dup_match_keys, on = 'RECORD_KEY_10051', how = 'leftanti')\r\n",
+                    "#)   "
+                ],
+                "outputs": [],
+                "execution_count": 11
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    },
+                    "collapsed": false
+                },
+                "source": [
+                    "#dfcolumns = spark.read.load('abfss://prodhspsynapsefs@prodhspsynapsedls.dfs.core.windows.net/bronze/3rdparty/acxiom/columns/Axiom_column_mapping.xlsx.parquet', format='parquet')\r\n",
+                    "#dfcolumns = dfcolumns[['HeaderName', 'Name']]\r\n",
+                    "#dfcolumns = dfcolumns.distinct()\r\n",
+                    "\r\n",
+                    "#display(df.limit(10))\r\n",
+                    ""
+                ],
+                "outputs": [],
+                "execution_count": 12
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    }
+                },
+                "source": [
+                    "silverOutputPath = f\"/silver/3rdparty/acxiom/acxiom_data1\"\r\n",
+                    "silverTable = f\"silver.acxiom_data1\"\r\n",
+                    "df.write.format(\"parquet\").mode(\"overwrite\").partitionBy('INPUT_STATE_3038_1').option(\"path\", silverOutputPath).saveAsTable(silverTable)"
+                ],
+                "outputs": [],
+                "execution_count": 13
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    },
+                    "collapsed": false
+                },
+                "source": [
+                    "#display(df.limit(10))"
+                ],
+                "outputs": [],
+                "execution_count": 14
+            }
+        ]
+    }
+}

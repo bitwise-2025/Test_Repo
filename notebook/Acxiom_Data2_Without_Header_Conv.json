@@ -1,0 +1,180 @@
+{
+    "name": "Acxiom_Data2_Without_Header_Conv",
+    "properties": {
+        "folder": {
+            "name": "3rdParty/Acxiom"
+        },
+        "nbformat": 4,
+        "nbformat_minor": 2,
+        "bigDataPool": {
+            "referenceName": "acxiomsparkpool",
+            "type": "BigDataPoolReference"
+        },
+        "sessionProperties": {
+            "driverMemory": "56g",
+            "driverCores": 8,
+            "executorMemory": "56g",
+            "executorCores": 8,
+            "numExecutors": 1,
+            "conf": {
+                "spark.dynamicAllocation.enabled": "true",
+                "spark.dynamicAllocation.minExecutors": "1",
+                "spark.dynamicAllocation.maxExecutors": "4",
+                "spark.autotune.trackingId": "9d3113a8-7bbc-4a3b-8254-17cde70de74d"
+            }
+        },
+        "metadata": {
+            "saveOutput": true,
+            "enableDebugMode": false,
+            "kernelspec": {
+                "name": "synapse_pyspark",
+                "display_name": "Synapse PySpark"
+            },
+            "language_info": {
+                "name": "python"
+            },
+            "a365ComputeOptions": {
+                "id": "/subscriptions/20d22ffe-b0c3-4d31-a3fe-ca732304439f/resourceGroups/Prod_DataEstate/providers/Microsoft.Synapse/workspaces/prod-hsp-synapse-workspace/bigDataPools/acxiomsparkpool",
+                "name": "acxiomsparkpool",
+                "type": "Spark",
+                "endpoint": "https://prod-hsp-synapse-workspace.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/acxiomsparkpool",
+                "auth": {
+                    "type": "AAD",
+                    "authResource": "https://dev.azuresynapse.net"
+                },
+                "sparkVersion": "3.1",
+                "nodeCount": 3,
+                "cores": 8,
+                "memory": 56
+            },
+            "sessionKeepAliveTimeout": 30
+        },
+        "cells": [
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    }
+                },
+                "source": [
+                    "from pyspark.sql.types import *\r\n",
+                    "from pyspark.sql.functions import *\r\n",
+                    "\r\n",
+                    "import re"
+                ],
+                "outputs": [],
+                "execution_count": 2
+            },
+            {
+                "cell_type": "code",
+                "source": [
+                    "spark.conf.set(\"spark.sql.autoBroadcastJoinThreshold\", -1)\r\n",
+                    "df = spark.read.load('abfss://prodhspsynapsefs@prodhspsynapsedls.dfs.core.windows.net/bronze/3rdparty/acxiom/NOVA_Install_pkg2_*.parquet', format='parquet')\r\n",
+                    "\r\n",
+                    ""
+                ],
+                "outputs": [],
+                "execution_count": 3
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    }
+                },
+                "source": [
+                    "#dfcolumns = spark.read.load('abfss://prodhspsynapsefs@prodhspsynapsedls.dfs.core.windows.net/bronze/3rdparty/acxiom/columns/Axiom_column_mapping.xlsx.parquet', format='parquet')\r\n",
+                    "#dfcolumns = dfcolumns[['HeaderName', 'Name']]\r\n",
+                    "#dfcolumns = dfcolumns.distinct()\r\n",
+                    ""
+                ],
+                "outputs": [],
+                "execution_count": 4
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    },
+                    "collapsed": false
+                },
+                "source": [
+                    "updatedcols = {}\r\n",
+                    "for index in df.columns:\r\n",
+                    "    if '.' in index:\r\n",
+                    "        updatedcols[index] = index.replace('.','_')\r\n",
+                    "\r\n",
+                    "count = 0\r\n",
+                    "for item in updatedcols:\r\n",
+                    "    df = df.withColumnRenamed(item,updatedcols[item])\r\n",
+                    "    \r\n",
+                    "    "
+                ],
+                "outputs": [],
+                "execution_count": 5
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    },
+                    "collapsed": false
+                },
+                "source": [
+                    "#display(df.limit(10))"
+                ],
+                "outputs": [],
+                "execution_count": 6
+            },
+            {
+                "cell_type": "code",
+                "metadata": {
+                    "jupyter": {
+                        "source_hidden": false,
+                        "outputs_hidden": false
+                    },
+                    "nteract": {
+                        "transient": {
+                            "deleting": false
+                        }
+                    }
+                },
+                "source": [
+                    "silverOutputPath = f\"/silver/3rdparty/acxiom/acxiom_data2\"\r\n",
+                    "silverTable = f\"silver.acxiom_data2\"\r\n",
+                    "df.write.format(\"parquet\").mode(\"overwrite\").option(\"path\", silverOutputPath).saveAsTable(silverTable)"
+                ],
+                "outputs": [],
+                "execution_count": 7
+            }
+        ]
+    }
+}
