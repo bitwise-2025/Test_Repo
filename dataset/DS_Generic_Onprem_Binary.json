@@ -1,0 +1,33 @@
+{
+    "name": "DS_Generic_Onprem_Binary",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "fileshare_sales_onprem",
+            "type": "LinkedServiceReference",
+            "parameters": {
+                "Host": "\\\\sftp.carmax.local\\EFT\\"
+            }
+        },
+        "parameters": {
+            "Host": {
+                "type": "string"
+            },
+            "File_path": {
+                "type": "string"
+            },
+            "File_name": {
+                "type": "string"
+            }
+        },
+        "folder": {
+            "name": "Generic Datasets"
+        },
+        "annotations": [],
+        "type": "Binary",
+        "typeProperties": {
+            "location": {
+                "type": "FileServerLocation"
+            }
+        }
+    }
+}

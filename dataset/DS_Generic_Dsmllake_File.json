@@ -1,0 +1,55 @@
+{
+    "name": "DS_Generic_Dsmllake_File",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "dsmllake_sales_dl",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "Container": {
+                "type": "string"
+            },
+            "Folder_Name": {
+                "type": "string"
+            },
+            "File_Name": {
+                "type": "string"
+            },
+            "Compression_type": {
+                "type": "string",
+                "defaultValue": "None"
+            }
+        },
+        "folder": {
+            "name": "Generic Datasets"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "fileName": {
+                    "value": "@dataset().File_Name",
+                    "type": "Expression"
+                },
+                "folderPath": {
+                    "value": "@dataset().Folder_Name",
+                    "type": "Expression"
+                },
+                "fileSystem": {
+                    "value": "@dataset().Container",
+                    "type": "Expression"
+                }
+            },
+            "columnDelimiter": ",",
+            "compressionCodec": {
+                "value": "@dataset().Compression_type",
+                "type": "Expression"
+            },
+            "escapeChar": "\\",
+            "firstRowAsHeader": true,
+            "quoteChar": "\""
+        },
+        "schema": []
+    }
+}

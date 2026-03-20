@@ -1,0 +1,103 @@
+{
+    "name": "DS_Generic_Blob_edwsaleslanding_DelimitedText",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "edwsaleslanding",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "container": {
+                "type": "string"
+            },
+            "directory": {
+                "type": "string"
+            },
+            "file_name": {
+                "type": "string"
+            },
+            "compression_type": {
+                "type": "string",
+                "defaultValue": "None"
+            },
+            "compression_level": {
+                "type": "string",
+                "defaultValue": "None"
+            },
+            "column_delimeter": {
+                "type": "string",
+                "defaultValue": ","
+            },
+            "encoding": {
+                "type": "string",
+                "defaultValue": "UTF-8"
+            },
+            "escape_character": {
+                "type": "string",
+                "defaultValue": "\\"
+            },
+            "quote_character": {
+                "type": "string",
+                "defaultValue": "\""
+            },
+            "first_row_as_header": {
+                "type": "bool",
+                "defaultValue": true
+            },
+            "null_value": {
+                "type": "string",
+                "defaultValue": "\""
+            }
+        },
+        "folder": {
+            "name": "Generic Datasets"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "fileName": {
+                    "value": "@dataset().file_name",
+                    "type": "Expression"
+                },
+                "folderPath": {
+                    "value": "@dataset().directory",
+                    "type": "Expression"
+                },
+                "fileSystem": {
+                    "value": "@dataset().container",
+                    "type": "Expression"
+                }
+            },
+            "columnDelimiter": {
+                "value": "@dataset().column_delimeter",
+                "type": "Expression"
+            },
+            "compressionCodec": {
+                "value": "@dataset().compression_type",
+                "type": "Expression"
+            },
+            "compressionLevel": {
+                "value": "@dataset().compression_level",
+                "type": "Expression"
+            },
+            "encodingName": {
+                "value": "@dataset().encoding",
+                "type": "Expression"
+            },
+            "escapeChar": {
+                "value": "@dataset().escape_character",
+                "type": "Expression"
+            },
+            "firstRowAsHeader": {
+                "value": "@dataset().first_row_as_header",
+                "type": "Expression"
+            },
+            "quoteChar": {
+                "value": "@dataset().quote_character",
+                "type": "Expression"
+            }
+        },
+        "schema": []
+    }
+}

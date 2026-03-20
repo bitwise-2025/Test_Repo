@@ -1,0 +1,45 @@
+{
+    "name": "DS_Generic_Snowflake",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "snowflake_sales_native",
+            "type": "LinkedServiceReference",
+            "parameters": {
+                "Database": {
+                    "value": "@dataset().database_name",
+                    "type": "Expression"
+                }
+            }
+        },
+        "parameters": {
+            "database_name": {
+                "type": "string",
+                "defaultValue": "odbc_tdprod"
+            },
+            "schema_name": {
+                "type": "string",
+                "defaultValue": "edw_sales"
+            },
+            "table_name": {
+                "type": "string",
+                "defaultValue": "offsite_ps_runlists"
+            }
+        },
+        "folder": {
+            "name": "Generic Datasets"
+        },
+        "annotations": [],
+        "type": "SnowflakeTable",
+        "schema": [],
+        "typeProperties": {
+            "schema": {
+                "value": "@dataset().schema_name",
+                "type": "Expression"
+            },
+            "table": {
+                "value": "@dataset().table_name",
+                "type": "Expression"
+            }
+        }
+    }
+}
