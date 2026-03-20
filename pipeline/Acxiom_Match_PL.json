@@ -1,0 +1,139 @@
+{
+    "name": "Acxiom_Match_PL",
+    "properties": {
+        "activities": [
+            {
+                "name": "sp_load_acxiom_matchkeys",
+                "type": "SqlServerStoredProcedure",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "2.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "storedProcedureName": "[gold].[sp_load_acxiom_matchkeys]"
+                },
+                "linkedServiceName": {
+                    "referenceName": "Prod_Dedicated_Pool_Load_Data",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "sp_reset_donor_acxiom_match",
+                "type": "SqlServerStoredProcedure",
+                "dependsOn": [
+                    {
+                        "activity": "sp_load_acxiom_matchkeys",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "2.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "storedProcedureName": "[gold].[sp_reset_donor_acxiom_match]"
+                },
+                "linkedServiceName": {
+                    "referenceName": "Prod_Dedicated_Pool_Load_Data",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "sp_donor_acxiom_match",
+                "type": "SqlServerStoredProcedure",
+                "dependsOn": [
+                    {
+                        "activity": "sp_reset_donor_acxiom_match",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "2.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "storedProcedureName": "[gold].[sp_donor_acxiom_match]"
+                },
+                "linkedServiceName": {
+                    "referenceName": "Prod_Dedicated_Pool_Load_Data",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "sp_load_donor_acxiom_match",
+                "type": "SqlServerStoredProcedure",
+                "dependsOn": [
+                    {
+                        "activity": "sp_donor_acxiom_match",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "2.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "storedProcedureName": "[gold].[sp_load_donor_acxiom_match]"
+                },
+                "linkedServiceName": {
+                    "referenceName": "Prod_Dedicated_Pool_Load_Data",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "sp_load_acxiom_dim",
+                "type": "SqlServerStoredProcedure",
+                "dependsOn": [
+                    {
+                        "activity": "sp_load_donor_acxiom_match",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "2.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "storedProcedureName": "[gold].[sp_load_acxiom_dim]"
+                },
+                "linkedServiceName": {
+                    "referenceName": "Prod_Dedicated_Pool_Load_Data",
+                    "type": "LinkedServiceReference"
+                }
+            }
+        ],
+        "folder": {
+            "name": "3rdparty/Acxiom/Secondary"
+        },
+        "annotations": []
+    }
+}

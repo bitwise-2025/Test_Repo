@@ -1,0 +1,101 @@
+{
+    "name": "Backup_And_Delete_Bronze",
+    "properties": {
+        "activities": [
+            {
+                "name": "Move_Files_To_Bak",
+                "type": "Copy",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "ParquetSource",
+                        "storeSettings": {
+                            "type": "AzureBlobFSReadSettings",
+                            "recursive": true,
+                            "wildcardFileName": "*.parquet",
+                            "enablePartitionDiscovery": false
+                        },
+                        "formatSettings": {
+                            "type": "ParquetReadSettings"
+                        }
+                    },
+                    "sink": {
+                        "type": "ParquetSink",
+                        "storeSettings": {
+                            "type": "AzureBlobFSWriteSettings"
+                        },
+                        "formatSettings": {
+                            "type": "ParquetWriteSettings"
+                        }
+                    },
+                    "enableStaging": false,
+                    "translator": {
+                        "type": "TabularTranslator",
+                        "typeConversion": true,
+                        "typeConversionSettings": {
+                            "allowDataTruncation": true,
+                            "treatBooleanAsNumber": false
+                        }
+                    }
+                },
+                "inputs": [
+                    {
+                        "referenceName": "axicomdataparquet",
+                        "type": "DatasetReference"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "referenceName": "axicomdataparquet_bak_folder",
+                        "type": "DatasetReference"
+                    }
+                ]
+            },
+            {
+                "name": "Delete_OLd_Parquet",
+                "type": "Delete",
+                "dependsOn": [
+                    {
+                        "activity": "Move_Files_To_Bak",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "axicomdataparquet",
+                        "type": "DatasetReference"
+                    },
+                    "enableLogging": false,
+                    "storeSettings": {
+                        "type": "AzureBlobFSReadSettings",
+                        "recursive": true,
+                        "wildcardFileName": "*.parquet",
+                        "enablePartitionDiscovery": false
+                    }
+                }
+            }
+        ],
+        "folder": {
+            "name": "3rdparty/Acxiom/Secondary"
+        },
+        "annotations": []
+    }
+}
