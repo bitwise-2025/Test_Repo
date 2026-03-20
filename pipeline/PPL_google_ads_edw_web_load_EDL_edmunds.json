@@ -1,0 +1,1395 @@
+{
+    "name": "PPL_google_ads_edw_web_load_EDL_edmunds",
+    "properties": {
+        "activities": [
+            {
+                "name": "DEL replicated files",
+                "type": "Delete",
+                "dependsOn": [
+                    {
+                        "activity": "ForEach_copy_Archive",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "DS_Generic_edwlanding_File",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "Container": {
+                                "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SinkContainer",
+                                "type": "Expression"
+                            },
+                            "File_Path": {
+                                "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SinkFIlePath",
+                                "type": "Expression"
+                            },
+                            "File_Name": {
+                                "value": "@concat(activity('LKP_Fetch Param From SF Table').output.firstRow.File_Name, '*.txt')",
+                                "type": "Expression"
+                            }
+                        }
+                    },
+                    "enableLogging": false,
+                    "storeSettings": {
+                        "type": "AzureBlobFSReadSettings",
+                        "recursive": true,
+                        "wildcardFileName": "*",
+                        "enablePartitionDiscovery": false
+                    }
+                }
+            },
+            {
+                "name": "v_Sysdate",
+                "type": "SetVariable",
+                "dependsOn": [],
+                "policy": {
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "variableName": "Sysdate",
+                    "value": {
+                        "value": "@utcnow('yyyy-MM-dd HH:mm:ss')",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "If Condition1",
+                "type": "IfCondition",
+                "dependsOn": [
+                    {
+                        "activity": "Until1",
+                        "dependencyConditions": [
+                            "Completed"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@greater(activity('FTR_Filter_compared_files').output.FilteredItemsCount,0)",
+                        "type": "Expression"
+                    },
+                    "ifFalseActivities": [
+                        {
+                            "name": "CPD_Copy_Dummy_File",
+                            "type": "Copy",
+                            "dependsOn": [
+                                {
+                                    "activity": "Exec_Send_email_on DummyFiles",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "DelimitedTextSource",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSReadSettings",
+                                        "recursive": true,
+                                        "enablePartitionDiscovery": false
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextReadSettings"
+                                    }
+                                },
+                                "sink": {
+                                    "type": "DelimitedTextSink",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSWriteSettings"
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextWriteSettings",
+                                        "quoteAllText": true,
+                                        "fileExtension": ".txt"
+                                    }
+                                },
+                                "enableStaging": false,
+                                "translator": {
+                                    "type": "TabularTranslator",
+                                    "typeConversion": true,
+                                    "typeConversionSettings": {
+                                        "allowDataTruncation": true,
+                                        "treatBooleanAsNumber": false
+                                    }
+                                }
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "DS_Generic_edwlanding_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SinkContainer",
+                                            "type": "Expression"
+                                        },
+                                        "File_Path": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.DummySrcPath",
+                                            "type": "Expression"
+                                        },
+                                        "File_Name": {
+                                            "value": "@concat(activity('LKP_Fetch Param From SF Table').output.firstRow.Dummy_File_Name,'_20220708160053.txt')",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "DS_Generic_edwlanding_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SinkContainer",
+                                            "type": "Expression"
+                                        },
+                                        "File_Path": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SinkFIlePath",
+                                            "type": "Expression"
+                                        },
+                                        "File_Name": {
+                                            "value": "@concat(activity('LKP_Fetch Param From SF Table').output.firstRow.Dummy_File_Name,'_',formatDateTime(utcNow(),'yyyyMMdd') ,'.txt')",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "CPD_Dummy_countFile",
+                            "type": "Copy",
+                            "dependsOn": [
+                                {
+                                    "activity": "Exec_Send_email_on DummyFiles",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "DelimitedTextSource",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSReadSettings",
+                                        "recursive": true,
+                                        "enablePartitionDiscovery": false
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextReadSettings"
+                                    }
+                                },
+                                "sink": {
+                                    "type": "DelimitedTextSink",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSWriteSettings"
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextWriteSettings",
+                                        "quoteAllText": true,
+                                        "fileExtension": ".txt"
+                                    }
+                                },
+                                "enableStaging": false,
+                                "translator": {
+                                    "type": "TabularTranslator",
+                                    "typeConversion": true,
+                                    "typeConversionSettings": {
+                                        "allowDataTruncation": true,
+                                        "treatBooleanAsNumber": false
+                                    }
+                                }
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "DS_Generic_edwlanding_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SinkContainer",
+                                            "type": "Expression"
+                                        },
+                                        "File_Path": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.DummySrcPath",
+                                            "type": "Expression"
+                                        },
+                                        "File_Name": {
+                                            "value": "@concat(activity('LKP_Fetch Param From SF Table').output.firstRow.Dummy_Count_File_Name, '.txt')",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "DS_Generic_edwlanding_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SinkContainer",
+                                            "type": "Expression"
+                                        },
+                                        "File_Path": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SinkFIlePath",
+                                            "type": "Expression"
+                                        },
+                                        "File_Name": {
+                                            "value": "@concat(activity('LKP_Fetch Param From SF Table').output.firstRow.Dummy_Count_File_Name,'_',formatDateTime(utcNow(),'yyyyMMdd') ,'.txt')",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Exec_Send_email_on DummyFiles",
+                            "type": "ExecutePipeline",
+                            "dependsOn": [],
+                            "policy": {
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "pipeline": {
+                                    "referenceName": "PPL_Generic_Email_Framework",
+                                    "type": "PipelineReference"
+                                },
+                                "waitOnCompletion": true,
+                                "parameters": {
+                                    "Pipeline_Name": {
+                                        "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.Pipeline_name",
+                                        "type": "Expression"
+                                    },
+                                    "Activity_Name": {
+                                        "value": "Email_on_Edmunds_Edw_Web_load_Dummy_Files",
+                                        "type": "Expression"
+                                    },
+                                    "Status": {
+                                        "value": "Succeeded",
+                                        "type": "Expression"
+                                    },
+                                    "Email_Type": {
+                                        "value": "STATIC",
+                                        "type": "Expression"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "DF_recon_google_ads_edmunds",
+                "type": "ExecuteDataFlow",
+                "dependsOn": [
+                    {
+                        "activity": "DF_google_ads_edmunds_edw_web_load_EDL",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataflow": {
+                        "referenceName": "DF_recon_google_ads_edmunds",
+                        "type": "DataFlowReference",
+                        "parameters": {
+                            "Output_recon_File": {
+                                "value": "'@{concat(activity('LKP_Fetch Param From SF Table').output.firstRow.OUTPUT_RECON_FILE,'_',formatDateTime(pipeline().TriggerTime,'yyyyMMddHHmmss'),'.csv')}'",
+                                "type": "Expression"
+                            },
+                            "Source_recon_File": {
+                                "value": "'@{activity('LKP_Fetch Param From SF Table').output.firstRow.Source_recon_File}'",
+                                "type": "Expression"
+                            },
+                            "Source_recon_Path": {
+                                "value": "'@{activity('LKP_Fetch Param From SF Table').output.firstRow.SinkFIlePath}'",
+                                "type": "Expression"
+                            }
+                        },
+                        "datasetParameters": {
+                            "SQingestionrecordcount": {
+                                "database_name": {
+                                    "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.Tgt_Database",
+                                    "type": "Expression"
+                                },
+                                "schema_name": {
+                                    "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.Tgt_Schema",
+                                    "type": "Expression"
+                                },
+                                "table_name": {
+                                    "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.Tgt_Table2",
+                                    "type": "Expression"
+                                }
+                            },
+                            "SQedlcountfile": {
+                                "container": {
+                                    "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SinkContainer",
+                                    "type": "Expression"
+                                },
+                                "directory": {
+                                    "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SinkFIlePath",
+                                    "type": "Expression"
+                                },
+                                "file_name": {
+                                    "value": "@concat(activity('LKP_Fetch Param From SF Table').output.firstRow.Source_recon_File, '*.txt')",
+                                    "type": "Expression"
+                                },
+                                "compression_type": "None",
+                                "compression_level": "None",
+                                "column_delimeter": "|",
+                                "encoding": "UTF-8",
+                                "escape_character": "\\",
+                                "quote_character": "\"",
+                                "first_row_as_header": false,
+                                "null_value": "''"
+                            },
+                            "sink1": {
+                                "Container": {
+                                    "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.OutputContainer",
+                                    "type": "Expression"
+                                },
+                                "File_Path": {
+                                    "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.OutputFilePath",
+                                    "type": "Expression"
+                                },
+                                "File_Name": {
+                                    "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.Output_recon_File",
+                                    "type": "Expression"
+                                }
+                            }
+                        }
+                    },
+                    "compute": {
+                        "coreCount": 8,
+                        "computeType": "General"
+                    },
+                    "traceLevel": "None",
+                    "cacheSinks": {
+                        "firstRowOnly": true
+                    }
+                }
+            },
+            {
+                "name": "LKP_Fetch Param From SF Table",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "SnowflakeSource",
+                        "query": {
+                            "value": "select\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='end_date_override' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_adgroup_edw_web_load_EDL')as end_date_override,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='begin_date_override' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_adgroup_edw_web_load_EDL')as begin_date_override,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Tgt_Database' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as Tgt_Database,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Tgt_Schema' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as Tgt_Schema,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Tgt_Table2' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as Tgt_Table2,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Tgt_Table1' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as Tgt_Table1,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='SrcContainer' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as SrcContainer,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='SrcFilePath' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as SrcFilePath,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='ArchiveContainer' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as ArchiveContainer,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='ArchiveFilePath' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as ArchiveFilePath,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='SinkContainer' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as SinkContainer,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='SinkFIlePath' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as SinkFIlePath,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='DummySrcPath' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as DummySrcPath,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='DF_Recon' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as DF_Recon,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Dummyfile' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as Dummyfile,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='On_Prem_Path' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as On_Prem_Path,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Pipeline_name' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as Pipeline_name,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Dummy_File_Name' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as Dummy_File_Name,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Dummy_Count_File_Name' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as Dummy_Count_File_Name,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='File_Name' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as File_Name,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='OutputContainer' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as OutputContainer,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='OutputFilePath' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as OutputFilePath,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Output_recon_File' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as Output_recon_File,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Source_recon_File' and pipeline_name='PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL')as Source_recon_File",
+                            "type": "Expression"
+                        },
+                        "exportSettings": {
+                            "type": "SnowflakeExportCopyCommand"
+                        }
+                    },
+                    "dataset": {
+                        "referenceName": "DS_Generic_Snowflake",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "database_name": {
+                                "value": "@pipeline().globalParameters.Database_Name",
+                                "type": "Expression"
+                            },
+                            "schema_name": {
+                                "value": "@pipeline().globalParameters.Schema_Name",
+                                "type": "Expression"
+                            },
+                            "table_name": {
+                                "value": "@pipeline().globalParameters.Table_Name",
+                                "type": "Expression"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "name": "LKP_Fatch Param From TD_Load Table",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "SnowflakeSource",
+                        "query": {
+                            "value": "select BEGIN_DATE from DATAOPS.EDW_METADATA.TD_LOAD_PARAMETERS where TABLE_NAME = 'GOOGLE_ADS_EDMUNDS_STG'",
+                            "type": "Expression"
+                        },
+                        "exportSettings": {
+                            "type": "SnowflakeExportCopyCommand"
+                        }
+                    },
+                    "dataset": {
+                        "referenceName": "DS_Generic_Snowflake",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "database_name": {
+                                "value": "@pipeline().globalParameters.Database_Name",
+                                "type": "Expression"
+                            },
+                            "schema_name": {
+                                "value": "@pipeline().globalParameters.Schema_Name",
+                                "type": "Expression"
+                            },
+                            "table_name": {
+                                "value": "@pipeline().globalParameters.Table_Name",
+                                "type": "Expression"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "name": "DF_google_ads_edmunds_edw_web_load_EDL",
+                "type": "ExecuteDataFlow",
+                "dependsOn": [
+                    {
+                        "activity": "ForEach1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "compute": {
+                        "coreCount": 8,
+                        "computeType": "General"
+                    },
+                    "traceLevel": "Fine"
+                }
+            },
+            {
+                "name": "Until1",
+                "type": "Until",
+                "dependsOn": [
+                    {
+                        "activity": "v_Sysdate",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    },
+                    {
+                        "activity": "LKP_Fetch Param From SF Table",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    },
+                    {
+                        "activity": "LKP_Fatch Param From TD_Load Table",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@equals(variables('File_Found'),'True')",
+                        "type": "Expression"
+                    },
+                    "activities": [
+                        {
+                            "name": "GMT_Get_all_files",
+                            "type": "GetMetadata",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "dataset": {
+                                    "referenceName": "DS_Generic_Dsmllake_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SrcContainer",
+                                            "type": "Expression"
+                                        },
+                                        "Folder_Name": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SrcFilePath",
+                                            "type": "Expression"
+                                        },
+                                        "File_Name": "*",
+                                        "Compression_type": "None"
+                                    }
+                                },
+                                "fieldList": [
+                                    "childItems"
+                                ],
+                                "storeSettings": {
+                                    "type": "AzureBlobFSReadSettings",
+                                    "recursive": true,
+                                    "modifiedDatetimeEnd": "2023-03-26T00:00:00.000Z",
+                                    "enablePartitionDiscovery": false
+                                },
+                                "formatSettings": {
+                                    "type": "DelimitedTextReadSettings"
+                                }
+                            }
+                        },
+                        {
+                            "name": "FTR_Filter latest files",
+                            "type": "Filter",
+                            "dependsOn": [
+                                {
+                                    "activity": "GMT_Get_all_files",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "userProperties": [],
+                            "typeProperties": {
+                                "items": {
+                                    "value": "@activity('GMT_Get_all_files').output.childItems",
+                                    "type": "Expression"
+                                },
+                                "condition": {
+                                    "value": "@if(\n\nand(equals(activity('LKP_Fetch Param From SF Table').output.firstRow.begin_date_override, ''),\nequals(activity('LKP_Fetch Param From SF Table').output.firstRow.end_date_override, '')),\nand(and(and(\n or(endswith(item().name, '.txt.gz'), endswith(item().name, '.txt')),\n greater(substring(replace(replace(item().name, '.txt.gz', ''), '.txt', ''),\n sub(length(replace(replace(item().name, '.txt.gz', ''), '.txt', '')), 14), 14),formatDateTime(activity('LKP_Fatch Param From TD_Load Table').output.firstRow.BEGIN_DATE,'yyyyMMdd'))),\n lessOrEquals(substring(replace(replace(item().name, '.txt.gz', ''), '.txt', ''),\n sub(length(replace(replace(item().name, '.txt.gz', ''), '.txt', '')), 14), 14),formatDateTime(variables('Sysdate'),'yyyyMMdd')))\n ,startswith(item().name, 'edmunds_daily_pricing')\n),\nand(and(and(\n or(endswith(item().name, '.txt.gz'), endswith(item().name, '.txt')),\n greater(substring(replace(replace(item().name, '.txt.gz', ''), '.txt', ''),\n sub(length(replace(replace(item().name, '.txt.gz', ''), '.txt', '')), 14), 14),formatDateTime(activity('LKP_Fetch Param From SF Table').output.firstRow.begin_date_override,'yyyyMMdd'))),\n lessOrEquals(substring(replace(replace(item().name, '.txt.gz', ''), '.txt', ''),\n sub(length(replace(replace(item().name, '.txt.gz', ''), '.txt', '')), 14), 14),formatDateTime(activity('LKP_Fetch Param From SF Table').output.firstRow.end_date_override,'yyyyMMdd')))\n ,startswith(item().name, 'edmunds_daily_pricing')\n)\n)",
+                                    "type": "Expression"
+                                }
+                            }
+                        },
+                        {
+                            "name": "FTR_Filter_compared_files",
+                            "type": "Filter",
+                            "dependsOn": [
+                                {
+                                    "activity": "FTR_Filter latest files",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                {
+                                    "activity": "GMT_Get_all_files_Archive",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "userProperties": [],
+                            "typeProperties": {
+                                "items": {
+                                    "value": "@activity('FTR_Filter latest files').output.value",
+                                    "type": "Expression"
+                                },
+                                "condition": {
+                                    "value": "@not(contains(activity('GMT_Get_all_files_Archive').output.childItems, item()))",
+                                    "type": "Expression"
+                                }
+                            }
+                        },
+                        {
+                            "name": "GMT_Get_all_files_Archive",
+                            "type": "GetMetadata",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "dataset": {
+                                    "referenceName": "DS_Generic_edwlanding_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.ArchiveContainer",
+                                            "type": "Expression"
+                                        },
+                                        "File_Path": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.ArchiveFilePath",
+                                            "type": "Expression"
+                                        },
+                                        "File_Name": "*"
+                                    }
+                                },
+                                "fieldList": [
+                                    "childItems"
+                                ],
+                                "storeSettings": {
+                                    "type": "AzureBlobFSReadSettings",
+                                    "recursive": true,
+                                    "enablePartitionDiscovery": false
+                                },
+                                "formatSettings": {
+                                    "type": "DelimitedTextReadSettings"
+                                }
+                            }
+                        },
+                        {
+                            "name": "If Condition2",
+                            "type": "IfCondition",
+                            "dependsOn": [
+                                {
+                                    "activity": "FTR_Filter_compared_files",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "userProperties": [],
+                            "typeProperties": {
+                                "expression": {
+                                    "value": "@greater(activity('FTR_Filter_compared_files').output.FilteredItemsCount,0)",
+                                    "type": "Expression"
+                                },
+                                "ifFalseActivities": [
+                                    {
+                                        "name": "Wait1",
+                                        "type": "Wait",
+                                        "dependsOn": [],
+                                        "userProperties": [],
+                                        "typeProperties": {
+                                            "waitTimeInSeconds": 30
+                                        }
+                                    }
+                                ],
+                                "ifTrueActivities": [
+                                    {
+                                        "name": "Set variable file",
+                                        "type": "SetVariable",
+                                        "dependsOn": [],
+                                        "policy": {
+                                            "secureOutput": false,
+                                            "secureInput": false
+                                        },
+                                        "userProperties": [],
+                                        "typeProperties": {
+                                            "variableName": "File_Found",
+                                            "value": "True"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "timeout": "0.00:02:00"
+                }
+            },
+            {
+                "name": "If_Condition_Update_script",
+                "type": "IfCondition",
+                "dependsOn": [
+                    {
+                        "activity": "SCR_SP_Google_Ads_Adgroup_Tgt",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@and(equals(activity('LKP_Fetch Param From SF Table').output.firstRow.begin_date_override, ''),\nequals(activity('LKP_Fetch Param From SF Table').output.firstRow.end_date_override, ''))",
+                        "type": "Expression"
+                    },
+                    "ifFalseActivities": [
+                        {
+                            "name": "SCR_update last run date SF Parameters",
+                            "type": "Script",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "linkedServiceName": {
+                                "referenceName": "snowflake_sales_native",
+                                "type": "LinkedServiceReference",
+                                "parameters": {
+                                    "Database": {
+                                        "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.Tgt_Database",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "typeProperties": {
+                                "scripts": [
+                                    {
+                                        "type": "Query",
+                                        "text": {
+                                            "value": "update DATAOPS.METADATA_CONTROLS.SF_PARAMETERS\nSET parameter_value = ''\nwhere pipeline_name = 'PPL_google_ads_edw_web_load_EDL' and dataflow_name='DF_google_ads_edmunds_edw_web_load_EDL' and  (parameter_name = 'end_date_override' or  parameter_name = 'begin_date_override')",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                ],
+                                "scriptBlockExecutionTimeout": "02:00:00"
+                            }
+                        },
+                        {
+                            "name": "SCR_update last run date TD load_copy1",
+                            "type": "Script",
+                            "dependsOn": [
+                                {
+                                    "activity": "SCR_update last run date SF Parameters",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "linkedServiceName": {
+                                "referenceName": "snowflake_sales_native",
+                                "type": "LinkedServiceReference",
+                                "parameters": {
+                                    "Database": {
+                                        "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.Tgt_Database",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "typeProperties": {
+                                "scripts": [
+                                    {
+                                        "type": "Query",
+                                        "text": {
+                                            "value": "update DATAOPS.EDW_METADATA.TD_LOAD_PARAMETERS\nset begin_date= current_timestamp\nwhere TABLE_NAME='GOOGLE_ADS_EDMUNDS_STG'",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                ],
+                                "scriptBlockExecutionTimeout": "02:00:00"
+                            }
+                        }
+                    ],
+                    "ifTrueActivities": [
+                        {
+                            "name": "SCR_update last run date TD load",
+                            "type": "Script",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "linkedServiceName": {
+                                "referenceName": "snowflake_sales_native",
+                                "type": "LinkedServiceReference",
+                                "parameters": {
+                                    "Database": {
+                                        "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.Tgt_Database",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "typeProperties": {
+                                "scripts": [
+                                    {
+                                        "type": "Query",
+                                        "text": {
+                                            "value": "update DATAOPS.EDW_METADATA.TD_LOAD_PARAMETERS\nset begin_date= current_timestamp\nwhere TABLE_NAME='GOOGLE_ADS_EDMUNDS_STG'",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                ],
+                                "scriptBlockExecutionTimeout": "02:00:00"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "DEL Archive",
+                "type": "Delete",
+                "dependsOn": [
+                    {
+                        "activity": "DEL replicated files",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "DS_Generic_edwlanding_File",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "Container": {
+                                "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.ArchiveContainer",
+                                "type": "Expression"
+                            },
+                            "File_Path": {
+                                "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.ArchiveFilePath",
+                                "type": "Expression"
+                            },
+                            "File_Name": {
+                                "value": "@concat(activity('LKP_Fetch Param From SF Table').output.firstRow.File_Name, '*.txt')",
+                                "type": "Expression"
+                            }
+                        }
+                    },
+                    "enableLogging": false,
+                    "storeSettings": {
+                        "type": "AzureBlobFSReadSettings",
+                        "recursive": true,
+                        "modifiedDatetimeEnd": {
+                            "value": "@subtractFromTime(formatDateTime(utcNow(),'MM/dd/yyyy'),7,'Day')",
+                            "type": "Expression"
+                        },
+                        "wildcardFileName": "*",
+                        "enablePartitionDiscovery": false
+                    }
+                }
+            },
+            {
+                "name": "ForEach_copy_Archive",
+                "type": "ForEach",
+                "dependsOn": [
+                    {
+                        "activity": "If_Condition_Update_script",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('FTR_Filter_compared_files').output.value",
+                        "type": "Expression"
+                    },
+                    "isSequential": false,
+                    "activities": [
+                        {
+                            "name": "CPD_Move files to archive",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "DelimitedTextSource",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSReadSettings",
+                                        "recursive": true,
+                                        "enablePartitionDiscovery": false
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextReadSettings"
+                                    }
+                                },
+                                "sink": {
+                                    "type": "DelimitedTextSink",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSWriteSettings"
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextWriteSettings",
+                                        "quoteAllText": true,
+                                        "fileExtension": ".txt"
+                                    }
+                                },
+                                "enableStaging": false,
+                                "translator": {
+                                    "type": "TabularTranslator",
+                                    "typeConversion": true,
+                                    "typeConversionSettings": {
+                                        "allowDataTruncation": true,
+                                        "treatBooleanAsNumber": false
+                                    }
+                                }
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "DS_Generic_Dsmllake_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SrcContainer",
+                                            "type": "Expression"
+                                        },
+                                        "Folder_Name": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SrcFilePath",
+                                            "type": "Expression"
+                                        },
+                                        "File_Name": {
+                                            "value": "@item().Name",
+                                            "type": "Expression"
+                                        },
+                                        "Compression_type": "None"
+                                    }
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "DS_Generic_edwlanding_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.ArchiveContainer",
+                                            "type": "Expression"
+                                        },
+                                        "File_Path": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.ArchiveFilePath",
+                                            "type": "Expression"
+                                        },
+                                        "File_Name": {
+                                            "value": "@item().Name",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "EPL_Google Ads AZ Archive Failure",
+                "type": "ExecutePipeline",
+                "dependsOn": [
+                    {
+                        "activity": "ForEach_copy_Archive",
+                        "dependencyConditions": [
+                            "Failed"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "PPL_Generic_Email_Framework",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true,
+                    "parameters": {
+                        "Pipeline_Name": {
+                            "value": "@pipeline().Pipeline",
+                            "type": "Expression"
+                        },
+                        "Activity_Name": "ForEach_copy_Archive"
+                    }
+                }
+            },
+            {
+                "name": "SCR_SP_Google_Ads_Adgroup_Tgt",
+                "type": "Script",
+                "dependsOn": [
+                    {
+                        "activity": "DF_recon_google_ads_edmunds",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "linkedServiceName": {
+                    "referenceName": "snowflake_sales_native",
+                    "type": "LinkedServiceReference",
+                    "parameters": {
+                        "Database": {
+                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.Tgt_Database",
+                            "type": "Expression"
+                        }
+                    }
+                },
+                "typeProperties": {
+                    "scripts": [
+                        {
+                            "type": "Query",
+                            "text": {
+                                "value": "--call Task Edw_stage_db.sp_google_ads_adgroup_load_Task(Out_Error_Count,Out_Hard_Stop_Error,Out_Records_Loaded);\n--call Execute Edw_stage_db.sp_google_ads_adgroup_load(Out_Error_Count,Out_Hard_Stop_Error,Out_Records_Loaded);\nselect 1",
+                                "type": "Expression"
+                            }
+                        }
+                    ],
+                    "scriptBlockExecutionTimeout": "02:00:00"
+                }
+            },
+            {
+                "name": "ForEach1",
+                "type": "ForEach",
+                "dependsOn": [
+                    {
+                        "activity": "If Condition1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('FTR_Filter_compared_files').output.value",
+                        "type": "Expression"
+                    },
+                    "isSequential": false,
+                    "activities": [
+                        {
+                            "name": "CPD_collect all latest files",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "DelimitedTextSource",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSReadSettings",
+                                        "recursive": true,
+                                        "enablePartitionDiscovery": false
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextReadSettings"
+                                    }
+                                },
+                                "sink": {
+                                    "type": "DelimitedTextSink",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSWriteSettings"
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextWriteSettings",
+                                        "quoteAllText": true,
+                                        "fileExtension": ".txt"
+                                    }
+                                },
+                                "enableStaging": false,
+                                "translator": {
+                                    "type": "TabularTranslator",
+                                    "typeConversion": true,
+                                    "typeConversionSettings": {
+                                        "allowDataTruncation": true,
+                                        "treatBooleanAsNumber": false
+                                    }
+                                }
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "DS_Generic_Dsmllake_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SrcContainer",
+                                            "type": "Expression"
+                                        },
+                                        "Folder_Name": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SrcFilePath",
+                                            "type": "Expression"
+                                        },
+                                        "File_Name": {
+                                            "value": "@item().Name",
+                                            "type": "Expression"
+                                        },
+                                        "Compression_type": {
+                                            "value": "@if(endsWith(item().Name, '.gz'), 'gzip','None')\n",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "DS_Generic_edwlanding_File",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Container": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SinkContainer",
+                                            "type": "Expression"
+                                        },
+                                        "File_Path": {
+                                            "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.SinkFIlePath",
+                                            "type": "Expression"
+                                        },
+                                        "File_Name": {
+                                            "value": "@replace(item().Name,'.gz','')",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "EPL_google_ads_az_download_fail",
+                            "type": "ExecutePipeline",
+                            "dependsOn": [
+                                {
+                                    "activity": "CPD_collect all latest files",
+                                    "dependencyConditions": [
+                                        "Failed"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "pipeline": {
+                                    "referenceName": "PPL_Generic_Email_Framework",
+                                    "type": "PipelineReference"
+                                },
+                                "waitOnCompletion": true
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "Move_File_To_Onprem",
+                "type": "Copy",
+                "dependsOn": [
+                    {
+                        "activity": "DF_recon_google_ads_edmunds",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "BinarySource",
+                        "storeSettings": {
+                            "type": "AzureBlobFSReadSettings",
+                            "recursive": true
+                        },
+                        "formatSettings": {
+                            "type": "BinaryReadSettings"
+                        }
+                    },
+                    "sink": {
+                        "type": "BinarySink",
+                        "storeSettings": {
+                            "type": "FileServerWriteSettings"
+                        }
+                    },
+                    "enableStaging": false
+                },
+                "inputs": [
+                    {
+                        "referenceName": "DS_Generic_Blob_Binary",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "container": {
+                                "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.OutputContainer",
+                                "type": "Expression"
+                            },
+                            "directory": {
+                                "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.OutputFilePath",
+                                "type": "Expression"
+                            },
+                            "file_name": {
+                                "value": "@concat(activity('LKP_Fetch Param From SF Table').output.firstRow.OUTPUT_RECON_FILE,'_',formatDateTime(pipeline().TriggerTime,'yyyyMMddHHmmss'),'.csv')",
+                                "type": "Expression"
+                            }
+                        }
+                    }
+                ],
+                "outputs": [
+                    {
+                        "referenceName": "DS_Generic_Onprem_Binary",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "Host": {
+                                "value": "@pipeline().globalParameters.onprem_hostname",
+                                "type": "Expression"
+                            },
+                            "File_path": {
+                                "value": "@activity('LKP_Fetch Param From SF Table').output.firstRow.On_Prem_Path",
+                                "type": "Expression"
+                            },
+                            "File_name": {
+                                "value": "@concat(activity('LKP_Fetch Param From SF Table').output.firstRow.OUTPUT_RECON_FILE,'_',formatDateTime(pipeline().TriggerTime,'yyyyMMddHHmmss'),'.csv')",
+                                "type": "Expression"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Email if Recon status failed",
+                "type": "IfCondition",
+                "dependsOn": [
+                    {
+                        "activity": "DF_recon_google_ads_edmunds",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@equals(activity('DF_recon_google_ads_edmunds').output.runStatus.output.Reconstatus.value[0].RECON_STATUS, 'FAILURE')",
+                        "type": "Expression"
+                    },
+                    "ifTrueActivities": [
+                        {
+                            "name": "EPL_Email_on_recon__status_failure",
+                            "type": "ExecutePipeline",
+                            "dependsOn": [],
+                            "policy": {
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "pipeline": {
+                                    "referenceName": "PPL_Generic_Email_Framework",
+                                    "type": "PipelineReference"
+                                },
+                                "waitOnCompletion": true,
+                                "parameters": {
+                                    "Pipeline_Name": {
+                                        "value": "PPL_google_ads_edw_web_load_EDL",
+                                        "type": "Expression"
+                                    },
+                                    "Activity_Name": {
+                                        "value": "DF_recon_google_ads_edmunds",
+                                        "type": "Expression"
+                                    },
+                                    "Status": "FAILED",
+                                    "Email_Type": {
+                                        "value": "STATIC",
+                                        "type": "Expression"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "variables": {
+            "fileName": {
+                "type": "String"
+            },
+            "Sysdate": {
+                "type": "String"
+            },
+            "begin_date": {
+                "type": "String"
+            },
+            "file": {
+                "type": "String"
+            },
+            "File_Found": {
+                "type": "String"
+            }
+        },
+        "folder": {
+            "name": "SALES/EDW_Web/PPL_google_ads_edw_web_load_EDL"
+        },
+        "annotations": []
+    }
+}

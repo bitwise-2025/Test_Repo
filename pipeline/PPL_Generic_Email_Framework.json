@@ -1,0 +1,282 @@
+{
+    "name": "PPL_Generic_Email_Framework",
+    "properties": {
+        "activities": [
+            {
+                "name": "If Condition1",
+                "type": "IfCondition",
+                "dependsOn": [],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@equals(pipeline().parameters.Email_Type, 'STATIC')",
+                        "type": "Expression"
+                    },
+                    "ifFalseActivities": [
+                        {
+                            "name": "LKP_Fetch_Message_Metadata",
+                            "type": "Lookup",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "SnowflakeSource",
+                                    "query": {
+                                        "value": "@concat('SELECT c.domain_name,c.subject_area,c.sender,c.id,c.subject,c.body,c.content_type,c.email_importance,\n  LISTAGG(c.recipient, ''; '') WITHIN GROUP (ORDER BY c.recipient) AS recipient\nFROM\n  (select a.id , b.message_id,a.domain_name,a.subject_area ,a.sender, b.recipient ,a.subject,a.body,a.content_type,a.email_importance from DATAOPS.METADATA_CONTROLS.MESSAGE_METADATA a  join DATAOPS.METADATA_CONTROLS.EMAIL_RECIPIENT b\nwhere b.message_id = a.id\nand a.pipeline_name = ''',pipeline().parameters.Pipeline_Name,''' and a.activity_name =''',pipeline().parameters.Activity_Name,'''and a.is_active = true and b.is_active = true and a.EMAIL_TYPE = ''dynamic'' and  a.message_type = ''',pipeline().parameters.Status,''' ) c  \nGROUP BY\n  c.domain_name,c.subject_area,c.sender,c.id,c.subject,c.body,c.content_type,c.email_importance')",
+                                        "type": "Expression"
+                                    },
+                                    "exportSettings": {
+                                        "type": "SnowflakeExportCopyCommand"
+                                    }
+                                },
+                                "dataset": {
+                                    "referenceName": "DS_Generic_Snowflake",
+                                    "type": "DatasetReference"
+                                },
+                                "firstRowOnly": true
+                            }
+                        },
+                        {
+                            "name": "Set_Body_value",
+                            "type": "SetVariable",
+                            "dependsOn": [
+                                {
+                                    "activity": "LKP_Fetch_Message_Metadata",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "variableName": "BODY",
+                                "value": {
+                                    "value": "@activity('LKP_Fetch_Message_Metadata').output.firstRow.BODY",
+                                    "type": "Expression"
+                                }
+                            }
+                        },
+                        {
+                            "name": "Set_Resolved_Body_value",
+                            "type": "SetVariable",
+                            "dependsOn": [
+                                {
+                                    "activity": "Set_Body_value",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "variableName": "Resolved_Body",
+                                "value": {
+                                    "value": "@replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(variables('BODY'),'$$Domain_Name',activity('LKP_Fetch_Message_Metadata').output.firstRow.DOMAIN_NAME),'$$Pipeline_Name',pipeline().parameters.Pipeline_Name),'$$Acivity_Name',pipeline().parameters.Activity_Name),'$$Status',pipeline().parameters.Status),'$$Trigger_Time',pipeline().parameters.Start_time),'$$Trigger_Mode',pipeline().parameters.Trigger_Type),'$$rows_Written','NA'),'$$Rows_rejected','NA'),'$$Error_Message','NA'),'$$Rows_Read',pipeline().parameters.Rows_Read),'$$Rows_Written',pipeline().parameters.Rows_Written),'$$Subject_Area',activity('LKP_Fetch_Message_Metadata').output.firstRow.SUBJECT_AREA)",
+                                    "type": "Expression"
+                                }
+                            }
+                        },
+                        {
+                            "name": "Set_Resolved_Subject",
+                            "type": "SetVariable",
+                            "dependsOn": [
+                                {
+                                    "activity": "Set_Resolved_Body_value",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "variableName": "Subject",
+                                "value": {
+                                    "value": "@replace(replace(replace(replace(activity('LKP_Fetch_Message_Metadata').output.firstRow.SUBJECT,'$$Domain_Name',activity('LKP_Fetch_Message_Metadata').output.firstRow.DOMAIN_NAME ),'$$Subject_Area',activity('LKP_Fetch_Message_Metadata').output.firstRow.SUBJECT_AREA),'$$Pipeline_Name',pipeline().parameters.Pipeline_Name),'$$Acivity_Name',pipeline().parameters.Activity_Name)",
+                                    "type": "Expression"
+                                }
+                            }
+                        },
+                        {
+                            "name": "Custom_Function_Dynamic",
+                            "type": "Custom",
+                            "dependsOn": [
+                                {
+                                    "activity": "Set_Resolved_Subject",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "command": {
+                                    "value": "@concat('\npython3.8 edw_email.py \"', variables('Subject') ,'\" \"',variables('Resolved_Body'),'\" \"',activity('LKP_Fetch_Message_Metadata').output.firstRow.SENDER,'\" \"',activity('LKP_Fetch_Message_Metadata').output.firstRow.RECIPIENT,'\" \"', activity('LKP_Fetch_Message_Metadata').output.firstRow.CONTENT_TYPE ,'\" \"smtp.carmax.local\" \"', activity('LKP_Fetch_Message_Metadata').output.firstRow.EMAIL_IMPORTANCE ,'\"')",
+                                    "type": "Expression"
+                                },
+                                "resourceLinkedService": {
+                                    "referenceName": "edwsharedlanding_blob",
+                                    "type": "LinkedServiceReference"
+                                },
+                                "folderPath": "scriptfiles",
+                                "referenceObjects": {
+                                    "linkedServices": [],
+                                    "datasets": []
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "edwsharedbatch",
+                                "type": "LinkedServiceReference"
+                            }
+                        }
+                    ],
+                    "ifTrueActivities": [
+                        {
+                            "name": "LKP_Fetch_Message_Metadata_Static",
+                            "type": "Lookup",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "SnowflakeSource",
+                                    "query": {
+                                        "value": "@concat('SELECT\n  c.sender,c.id,c.subject,c.body,c.content_type,c.email_importance,\n  LISTAGG(c.recipient, ''; '') WITHIN GROUP (ORDER BY c.recipient) AS recipient\nFROM\n  (select a.id , b.message_id,a.sender, b.recipient ,a.subject,a.body,a.content_type,a.email_importance from DATAOPS.METADATA_CONTROLS.MESSAGE_METADATA a  join DATAOPS.METADATA_CONTROLS.EMAIL_RECIPIENT b\nwhere b.message_id = a.id\nand a.pipeline_name = ''',pipeline().parameters.Pipeline_Name,''' and a.is_active = true and b.is_active = true and a.EMAIL_TYPE = ''static'' and a.activity_name =''',pipeline().parameters.Activity_Name,''' and a.message_type = ''',pipeline().parameters.Status,''' ) c  \nGROUP BY\n  c.sender,c.id,c.subject,c.body,c.content_type,c.email_importance')",
+                                        "type": "Expression"
+                                    },
+                                    "exportSettings": {
+                                        "type": "SnowflakeExportCopyCommand"
+                                    }
+                                },
+                                "dataset": {
+                                    "referenceName": "DS_Generic_Snowflake",
+                                    "type": "DatasetReference"
+                                },
+                                "firstRowOnly": true
+                            }
+                        },
+                        {
+                            "name": "Custom_Function_Static",
+                            "type": "Custom",
+                            "dependsOn": [
+                                {
+                                    "activity": "LKP_Fetch_Message_Metadata_Static",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "command": {
+                                    "value": "@concat('\npython3.8 edw_email.py \"', activity('LKP_Fetch_Message_Metadata_Static').output.firstRow.SUBJECT ,'\" \"',activity('LKP_Fetch_Message_Metadata_Static').output.firstRow.BODY,'\" \"',activity('LKP_Fetch_Message_Metadata_Static').output.firstRow.SENDER,'\" \"',activity('LKP_Fetch_Message_Metadata_Static').output.firstRow.RECIPIENT,'\" \"', activity('LKP_Fetch_Message_Metadata_Static').output.firstRow.CONTENT_TYPE ,'\" \"smtp.carmax.local\" \"', activity('LKP_Fetch_Message_Metadata_Static').output.firstRow.EMAIL_IMPORTANCE ,'\"')",
+                                    "type": "Expression"
+                                },
+                                "resourceLinkedService": {
+                                    "referenceName": "edwsharedlanding_blob",
+                                    "type": "LinkedServiceReference"
+                                },
+                                "folderPath": "scriptfiles",
+                                "referenceObjects": {
+                                    "linkedServices": [],
+                                    "datasets": []
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "edwsharedbatch",
+                                "type": "LinkedServiceReference"
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "parameters": {
+            "Pipeline_Name": {
+                "type": "string",
+                "defaultValue": "PPL_Workday_API_Team_Assignment_Load"
+            },
+            "Activity_Name": {
+                "type": "string",
+                "defaultValue": "DF_RawLayer_To_Target"
+            },
+            "Status": {
+                "type": "string",
+                "defaultValue": "Failed"
+            },
+            "Start_time": {
+                "type": "string",
+                "defaultValue": "NA"
+            },
+            "Trigger_Type": {
+                "type": "string",
+                "defaultValue": "NA"
+            },
+            "Rows_Written": {
+                "type": "string",
+                "defaultValue": "NA"
+            },
+            "Rows_Read": {
+                "type": "string",
+                "defaultValue": "NA"
+            },
+            "Email_Type": {
+                "type": "string",
+                "defaultValue": "DYNAMIC"
+            }
+        },
+        "variables": {
+            "BODY": {
+                "type": "String"
+            },
+            "Resolved_Body": {
+                "type": "String"
+            },
+            "Subject": {
+                "type": "String"
+            }
+        },
+        "folder": {
+            "name": "Generic_Pipelines"
+        },
+        "annotations": []
+    }
+}
