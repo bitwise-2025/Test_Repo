@@ -1,0 +1,243 @@
+{
+    "name": "CCR_EDL_HR_vsales_purge_archive_file_tryout",
+    "properties": {
+        "activities": [
+            {
+                "name": "Difference",
+                "type": "SetVariable",
+                "dependsOn": [
+                    {
+                        "activity": "currenttimestamp",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "variableName": "Difference",
+                    "value": {
+                        "value": "@string(div(sub(ticks(variables('start_Date')),ticks(variables('Lst_modified_Date'))),864000000000))\n\n",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "currenttimestamp",
+                "type": "SetVariable",
+                "dependsOn": [
+                    {
+                        "activity": "LastMOdified",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "variableName": "start_Date",
+                    "value": {
+                        "value": "@utcnow()",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "LastMOdified",
+                "type": "SetVariable",
+                "dependsOn": [
+                    {
+                        "activity": "ForEach1",
+                        "dependencyConditions": [
+                            "Completed"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "variableName": "Lst_modified_Date",
+                    "value": "2023-07-01T19:11:46.3538484Z"
+                }
+            },
+            {
+                "name": "IFC_Check_diff",
+                "type": "IfCondition",
+                "dependsOn": [
+                    {
+                        "activity": "Difference",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@greater(variables('Difference'),pipeline().parameters.days_to_retain)",
+                        "type": "Expression"
+                    },
+                    "ifTrueActivities": [
+                        {
+                            "name": "Wait1",
+                            "type": "Wait",
+                            "dependsOn": [],
+                            "userProperties": [],
+                            "typeProperties": {
+                                "waitTimeInSeconds": 5
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "Get Metadata1",
+                "type": "GetMetadata",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "DS_Generic_Onprem_Binary",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "Host": "\\\\edwinffsvp13\\EDW_Infa_File_Share",
+                            "File_path": "data\\Sales_Evolution\\ARCHIVE-CCR",
+                            "File_name": "*"
+                        }
+                    },
+                    "fieldList": [
+                        "childItems"
+                    ],
+                    "storeSettings": {
+                        "type": "FileServerReadSettings",
+                        "recursive": true,
+                        "enablePartitionDiscovery": false
+                    },
+                    "formatSettings": {
+                        "type": "BinaryReadSettings"
+                    }
+                }
+            },
+            {
+                "name": "ForEach1",
+                "type": "ForEach",
+                "dependsOn": [
+                    {
+                        "activity": "Filter1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('Filter1').output.value",
+                        "type": "Expression"
+                    },
+                    "activities": [
+                        {
+                            "name": "Get Metadata2",
+                            "type": "GetMetadata",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "dataset": {
+                                    "referenceName": "DS_Generic_Onprem_Binary",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "Host": "\\\\edwinffsvp13\\EDW_Infa_File_Share",
+                                        "File_path": "data\\Sales_Evolution\\ARCHIVE-CCR",
+                                        "File_name": {
+                                            "value": "@item().name",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                },
+                                "fieldList": [
+                                    "lastModified",
+                                    "itemName"
+                                ],
+                                "storeSettings": {
+                                    "type": "FileServerReadSettings",
+                                    "recursive": true,
+                                    "enablePartitionDiscovery": false
+                                },
+                                "formatSettings": {
+                                    "type": "BinaryReadSettings"
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "Filter1",
+                "type": "Filter",
+                "dependsOn": [
+                    {
+                        "activity": "Get Metadata1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('Get Metadata1').output.childItems",
+                        "type": "Expression"
+                    },
+                    "condition": {
+                        "value": "@equals(item().type,'Folder')",
+                        "type": "Expression"
+                    }
+                }
+            }
+        ],
+        "parameters": {
+            "days_to_retain": {
+                "type": "string",
+                "defaultValue": "15"
+            }
+        },
+        "variables": {
+            "start_Date": {
+                "type": "String",
+                "defaultValue": "15"
+            },
+            "Lst_modified_Date": {
+                "type": "String"
+            },
+            "Difference": {
+                "type": "String"
+            }
+        },
+        "annotations": []
+    }
+}
