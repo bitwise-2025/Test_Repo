@@ -1,0 +1,32 @@
+{
+    "name": "fileshare_sales_onprem",
+    "properties": {
+        "type": "FileServer",
+        "parameters": {
+            "Host": {
+                "type": "string",
+                "defaultValue": "\\\\edwinffsvp13\\EDW_Infa_File_Share"
+            }
+        },
+        "annotations": [],
+        "typeProperties": {
+            "host": "@{linkedService().Host}",
+            "userId": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_shared",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "fileshare-onprem-user"
+            },
+            "password": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_shared",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "fileshare-onprem-password"
+            }
+        }
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "name": "snowflake_sales_native",
+    "properties": {
+        "description": "Native Snowflake connection to the public endpoint for the Sales domain.",
+        "parameters": {
+            "Database": {
+                "type": "string"
+            }
+        },
+        "annotations": [],
+        "type": "Snowflake",
+        "typeProperties": {
+            "authenticationType": "Basic",
+            "connectionString": "jdbc:snowflake://carmax-adf-dev.snowflakecomputing.com/?user=svc_ADF_ETL&db=@{linkedService().Database}",
+            "password": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_sales",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "snowflake-sales-password"
+            }
+        }
+    }
+}

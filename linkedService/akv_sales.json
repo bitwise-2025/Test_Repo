@@ -1,0 +1,10 @@
+{
+    "name": "akv_sales",
+    "properties": {
+        "annotations": [],
+        "type": "AzureKeyVault",
+        "typeProperties": {
+            "baseUrl": "https://kmx-dev-edw-sales-kv.vault.azure.net/"
+        }
+    }
+}

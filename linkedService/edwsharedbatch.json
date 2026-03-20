@@ -1,0 +1,45 @@
+{
+    "name": "edwsharedbatch",
+    "properties": {
+        "annotations": [],
+        "type": "AzureBatch",
+        "typeProperties": {
+            "batchUri": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_shared",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "edwsharedbatch-uri"
+            },
+            "poolName": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_shared",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "edwsharedbatch-pool"
+            },
+            "accountName": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_shared",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "edwsharedbatch-accountname"
+            },
+            "linkedServiceName": {
+                "referenceName": "edwsharedlanding_blob",
+                "type": "LinkedServiceReference"
+            },
+            "accessKey": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_shared",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "edwsharedbatch-accesskey"
+            }
+        }
+    }
+}

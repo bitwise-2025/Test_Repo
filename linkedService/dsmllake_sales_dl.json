@@ -1,0 +1,17 @@
+{
+    "name": "dsmllake_sales_dl",
+    "properties": {
+        "annotations": [],
+        "type": "AzureBlobFS",
+        "typeProperties": {
+            "url": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_shared",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "dsmllake-url"
+            }
+        }
+    }
+}

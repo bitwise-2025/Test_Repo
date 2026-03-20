@@ -1,0 +1,10 @@
+{
+    "name": "akv_shared",
+    "properties": {
+        "annotations": [],
+        "type": "AzureKeyVault",
+        "typeProperties": {
+            "baseUrl": "https://kmx-dev-edw-shared-kv.vault.azure.net/"
+        }
+    }
+}

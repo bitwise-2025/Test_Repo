@@ -1,0 +1,25 @@
+{
+    "name": "edwsaleslanding",
+    "properties": {
+        "type": "AzureBlobFS",
+        "annotations": [],
+        "typeProperties": {
+            "url": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_sales",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "edwsaleslanding-url"
+            },
+            "accountKey": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "akv_sales",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "edwsaleslanding-key"
+            }
+        }
+    }
+}
