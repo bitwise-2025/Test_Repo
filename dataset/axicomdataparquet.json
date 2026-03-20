@@ -1,0 +1,24 @@
+{
+    "name": "axicomdataparquet",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "prod-hsp-synapse-workspace-WorkspaceDefaultStorage",
+            "type": "LinkedServiceReference"
+        },
+        "folder": {
+            "name": "3rdparty/Axicom"
+        },
+        "annotations": [],
+        "type": "Parquet",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "folderPath": "bronze/3rdparty/acxiom",
+                "fileSystem": "prodhspsynapsefs"
+            },
+            "compressionCodec": "snappy"
+        },
+        "schema": []
+    },
+    "type": "Microsoft.Synapse/workspaces/datasets"
+}

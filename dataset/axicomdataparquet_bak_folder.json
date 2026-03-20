@@ -1,0 +1,27 @@
+{
+    "name": "axicomdataparquet_bak_folder",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "prod-hsp-synapse-workspace-WorkspaceDefaultStorage",
+            "type": "LinkedServiceReference"
+        },
+        "folder": {
+            "name": "3rdparty/Axicom"
+        },
+        "annotations": [],
+        "type": "Parquet",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "folderPath": {
+                    "value": "@concat('bronze/3rdparty/acxiom/bak/',formatDateTime(utcnow(), 'yyyy-dd-MM'))\n\n",
+                    "type": "Expression"
+                },
+                "fileSystem": "prodhspsynapsefs"
+            },
+            "compressionCodec": "snappy"
+        },
+        "schema": []
+    },
+    "type": "Microsoft.Synapse/workspaces/datasets"
+}

@@ -1,0 +1,2125 @@
+{
+    "name": "Axicom_data_mapping_parquet",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "prod-hsp-synapse-workspace-WorkspaceDefaultStorage",
+            "type": "LinkedServiceReference"
+        },
+        "folder": {
+            "name": "3rdparty/Axicom"
+        },
+        "annotations": [],
+        "type": "Parquet",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "folderPath": "bronze/3rdparty/acxiom/columns",
+                "fileSystem": "prodhspsynapsefs"
+            },
+            "compressionCodec": "snappy"
+        },
+        "schema": [
+            {
+                "name": "PREFIX_TITLE_8093",
+                "type": "UTF8"
+            },
+            {
+                "name": "FIRST_NAME_3131",
+                "type": "UTF8"
+            },
+            {
+                "name": "MIDDLE_INITIAL_3131",
+                "type": "UTF8"
+            },
+            {
+                "name": "LAST_NAME_3131",
+                "type": "UTF8"
+            },
+            {
+                "name": "CONCAT.NAME",
+                "type": "UTF8"
+            },
+            {
+                "name": "STREET_NUMBER_LEFTJUSTIFIED_3133",
+                "type": "UTF8"
+            },
+            {
+                "name": "STREET_DIRECTIONAL_3133",
+                "type": "UTF8"
+            },
+            {
+                "name": "STREET_NAME_SUFFIX_POST_DIRECTIONAL_3133",
+                "type": "UTF8"
+            },
+            {
+                "name": "CONCAT.ADDRESS",
+                "type": "UTF8"
+            },
+            {
+                "name": "ADDRESS_LINE2_4111",
+                "type": "UTF8"
+            },
+            {
+                "name": "CITY_3040",
+                "type": "UTF8"
+            },
+            {
+                "name": "STATE_3038",
+                "type": "UTF8"
+            },
+            {
+                "name": "ZIP_CODE_3043",
+                "type": "UTF8"
+            },
+            {
+                "name": "ZIP4_CODE_3044",
+                "type": "UTF8"
+            },
+            {
+                "name": "ZIP4_RECORD_TYPE_3045",
+                "type": "UTF8"
+            },
+            {
+                "name": "ADDRESS_LINE_3002",
+                "type": "UTF8"
+            },
+            {
+                "name": "ADDRESS_TYPE_INDICATOR_3001",
+                "type": "UTF8"
+            },
+            {
+                "name": "WALK_SEQUENCE_3042",
+                "type": "UTF8"
+            },
+            {
+                "name": "DELIVERY_POINT_BAR_CODE_3046",
+                "type": "UTF8"
+            },
+            {
+                "name": "CARRIER_ROUTE_CODE_3009",
+                "type": "UTF8"
+            },
+            {
+                "name": "DSF_DELIVERABILITY_INDICATOR_3037",
+                "type": "UTF8"
+            },
+            {
+                "name": "LOT_CARRIER_LINE_OF_TRAVEL_3008",
+                "type": "UTF8"
+            },
+            {
+                "name": "DELIVERY_POINT_DROP_INDICATOR_8094",
+                "type": "UTF8"
+            },
+            {
+                "name": "USE_CODE_3048",
+                "type": "UTF8"
+            },
+            {
+                "name": "NUMBER_OF_SOURCES_NAME_ADDRESS_3027",
+                "type": "UTF8"
+            },
+            {
+                "name": "RECORD_KEY_10051",
+                "type": "UTF8"
+            },
+            {
+                "name": "COMPANY_ID_4116",
+                "type": "UTF8"
+            },
+            {
+                "name": "INDIVIDUAL_ID_4117",
+                "type": "UTF8"
+            },
+            {
+                "name": "NEW_TO_BUILD_4901",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILE_DATE_3015",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7964B_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7964B_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7964B_03",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7964B_09",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7964B_11",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7964B_13",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7964B_18",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7964B_20",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7994B_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7994B_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP000306_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP000306_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP000308_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP000308_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP000436",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP000443_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP000443_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP000445_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP000445_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP000447_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP000447_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP000453_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP000453_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP000645",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP000655",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP001250_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP001250_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP001371",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP001625",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP001715",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP001718",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP001722",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP001755",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP002572",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP002778",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP002779",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP002780",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP002781",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP002897",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP002989",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP003446",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP003447",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP003448",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP003587",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP003588",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP003589",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP003590",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP003591",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP003592",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP003593",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP003594",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP003595",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP004327",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP004330",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP004336",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP004814_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP004814_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP004819_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP004819_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP004904",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP004906",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP004907",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP004908",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP004909",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP004910",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP004911",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP004912",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP004928",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005011",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005094",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005095",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005096",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005097",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP005098",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005100",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005101",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005102",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005103",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005104",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP005105",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005317",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005332",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005461",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP006232",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_AP008715",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP008717",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP008718",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP008727",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP008728",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP008729",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE1273_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE1273_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7110",
+                "type": "UTF8"
+            },
+            {
+                "name": "MP000039",
+                "type": "UTF8"
+            },
+            {
+                "name": "MP000087",
+                "type": "UTF8"
+            },
+            {
+                "name": "PX001270_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "PX001270_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "PX001271_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "PX001271_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "PX001274_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "PX001274_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP000111",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP000119",
+                "type": "UTF8"
+            },
+            {
+                "name": "tp000267",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP000449",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP000450",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP000539",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP000540",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP000542",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP000543",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP000590",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001182",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001189",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_TP001513",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001514",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001515",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001516",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001517",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_TP001542",
+                "type": "UTF8"
+            },
+            {
+                "name": "FILLER_TP001571",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001586",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_03",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_04",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_05",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_06",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_07",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_08",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_09",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_10",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_11",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_12",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_13",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_14",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_15",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_16",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_17",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_18",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_19",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_20",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_21",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7600_22",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7602_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7602_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7606_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7606_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7607_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7607_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7609_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7609_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7616_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7616_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7622_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7622_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7628_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7628_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7629_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7629_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7641_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7641_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7650_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7650_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7671_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7671_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7719",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7720",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7721",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7723",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7724",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7725",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7726",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7727",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7728",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7729",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7730",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7732",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7733",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7734",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7735",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7736",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7737",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7738",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7739",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7740",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7741",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7742",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7743",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7744",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7746",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7747",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7748",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7750",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7751",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7752",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7753",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7754",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7755",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7756",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7757",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7758",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7759",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7760",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7761",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7762",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7763",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7764",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7766",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7768",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7770",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7771",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7772",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7773",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7774",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7775",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7777",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7779",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7780",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7781",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7782",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7783",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7784",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7785",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7786",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7787",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7788",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7789",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7790",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7791",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7792",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7793",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7794",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7795",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7796",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7799",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7801",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7802",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7803",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7804",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7805",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7807",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7808",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7809",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7810",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7811",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7812",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7813",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7814",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7815",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7816",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7817",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7821",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7822",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7823",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7824",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7825",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7826",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7827",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7828",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7829",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7830",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7831",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7832",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7841",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7843",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7844",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7847",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7848",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7849",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7851",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7856",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE7860",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_03",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_04",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_05",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_06",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_07",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_08",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_09",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_10",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_11",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_12",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_13",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_14",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_15",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_16",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_17",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_18",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_19",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_20",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_21",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_22",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_23",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_24",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_25",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_26",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_27",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_28",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_29",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_30",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8167_31",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8177",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8201",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8236",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8257",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8263",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8271",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8272",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8274",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8276",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8277",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8278",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8279",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8321",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8322",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8326",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8337",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8339",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8438",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8439",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8440",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8441",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8443",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8446",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8463",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8487",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8496",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8531",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8555",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8557",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8558",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8559",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8578",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8581",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8588",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8589",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8592",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8594",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8602",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8604",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8605",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8606",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8607",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8608",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8609",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8610_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8610_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8610_03",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8611_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8611_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8611_03",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8612_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8612_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8612_03",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8614",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8615",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8616",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8617",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8618_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8618_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8618_03",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8620",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8621_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8621_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8621_03",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8621_04",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8621_05",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8621_06",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8622",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8623_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8623_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8623_03",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8625",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8626",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8628",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8629",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8630",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8637",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8641",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8642",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8643",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8644",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8645",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8647",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8652",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8653",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8656",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8657",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8658",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8671",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8688",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8692",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8693",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8701",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8713",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8749",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8763",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8808",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8815",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8816",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8836",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE8850",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9040",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9041",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9042",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9047",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9100",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9180",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9350",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9351",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9355",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9356",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9358",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9509",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9510",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9514",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9515",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9516",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9528",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9529",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9530",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9531",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9532",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9533",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9549",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9557",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9606",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9607",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9609",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE9750",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2100",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2205",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2208",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2350",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2356",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2360",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2403_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2403_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2404_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2404_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2405_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2405_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2526",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2776",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2800",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2807",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE3101",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE3102",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE3103",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE4000",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE6264",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE6399",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE6451",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE6587",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2076_01",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2076_02",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2076_03",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2076_04",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2076_05",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2076_06",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2076_07",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2076_08",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2076_09",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2076_10",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2076_11",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2076_12",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2076_13",
+                "type": "UTF8"
+            },
+            {
+                "name": "IBE2077",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP004329",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP004337",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP004358",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP004359",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005458",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005459",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005510",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005514",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP005519",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP006114",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP006753",
+                "type": "UTF8"
+            },
+            {
+                "name": "AP006784",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP000096",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001029",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001035",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001036",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001043",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001047",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001048",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001050",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP000171",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP000172",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP000175",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001700",
+                "type": "UTF8"
+            },
+            {
+                "name": "TP001704",
+                "type": "UTF8"
+            }
+        ]
+    },
+    "type": "Microsoft.Synapse/workspaces/datasets"
+}

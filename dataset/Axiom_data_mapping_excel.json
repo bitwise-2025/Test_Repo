@@ -1,0 +1,26 @@
+{
+    "name": "Axiom_data_mapping_excel",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "3rdpartystorage",
+            "type": "LinkedServiceReference"
+        },
+        "folder": {
+            "name": "3rdparty/Axicom"
+        },
+        "annotations": [],
+        "type": "Excel",
+        "typeProperties": {
+            "sheetName": "Sheet1",
+            "location": {
+                "type": "AzureBlobStorageLocation",
+                "fileName": "Axiom_column_mapping.xlsx",
+                "folderPath": "columns",
+                "container": "acxiom"
+            },
+            "firstRowAsHeader": true
+        },
+        "schema": []
+    },
+    "type": "Microsoft.Synapse/workspaces/datasets"
+}

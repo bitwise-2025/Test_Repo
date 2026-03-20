@@ -1,0 +1,28 @@
+{
+    "name": "axicomdatasource",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "3rdpartystorage",
+            "type": "LinkedServiceReference"
+        },
+        "folder": {
+            "name": "3rdparty/Axicom"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobStorageLocation",
+                "fileName": "*.txt",
+                "folderPath": "data",
+                "container": "acxiom"
+            },
+            "columnDelimiter": "|",
+            "escapeChar": "\\",
+            "firstRowAsHeader": true,
+            "quoteChar": "\""
+        },
+        "schema": []
+    },
+    "type": "Microsoft.Synapse/workspaces/datasets"
+}
