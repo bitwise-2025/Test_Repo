@@ -1,0 +1,193 @@
+{
+    "name": "PPL_cr_current_appraisal_load",
+    "properties": {
+        "activities": [
+            {
+                "name": "DF_cr_current_appraisal_load",
+                "type": "ExecuteDataFlow",
+                "dependsOn": [
+                    {
+                        "activity": "SCT_Pre_SQL_Filter_Values",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "7.00:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "compute": {
+                        "coreCount": 8,
+                        "computeType": "General"
+                    },
+                    "traceLevel": "Fine"
+                }
+            },
+            {
+                "name": "V_Session_Start_Time",
+                "type": "SetVariable",
+                "dependsOn": [],
+                "policy": {
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "variableName": "V_Session_Start_Time",
+                    "value": {
+                        "value": "@formatDateTime(convertFromUtc(utcnow(), 'Eastern Standard Time'),'yyyy-MM-dd HH:mm:ss')",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "LKP_Fetch_SF_Parameters",
+                "type": "Lookup",
+                "dependsOn": [
+                    {
+                        "activity": "V_Session_Start_Time",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "SnowflakeSource",
+                        "query": "SELECT   \r\n(select DISTINCT PIPELINE_NAME from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where pipeline_name = 'PPL_cr_Low_Priority_edw_sales1_2' and dataflow_name = 'DF_cr_current_appraisal_load') as P_Pipeline_Name,\r\n(select DISTINCT DATAFLOW_NAME from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where pipeline_name = 'PPL_cr_Low_Priority_edw_sales1_2' and dataflow_name = 'DF_cr_current_appraisal_load') as P_Dataflow_Name,\r\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where pipeline_name = 'PPL_cr_Low_Priority_edw_sales1_2' and dataflow_name = 'DF_cr_current_appraisal_load' and parameter_name = 'P_Target_Database') as P_Target_Database,\r\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where pipeline_name = 'PPL_cr_Low_Priority_edw_sales1_2' and dataflow_name = 'DF_cr_current_appraisal_load' and parameter_name = 'P_Target_Schema') as P_Target_Schema,\r\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where pipeline_name = 'PPL_cr_Low_Priority_edw_sales1_2' and dataflow_name = 'DF_cr_current_appraisal_load' and parameter_name = 'P_Target_Table') as P_Target_Table,\r\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where pipeline_name = 'PPL_cr_Low_Priority_edw_sales1_2' and dataflow_name = 'DF_cr_current_appraisal_load' and parameter_name = 'P_Error_Path') as P_Error_Path,\r\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where pipeline_name = 'PPL_cr_Low_Priority_edw_sales1_2' and dataflow_name = 'DF_cr_current_appraisal_load' and parameter_name = 'P_EDW_Database_Table_Name') as P_EDW_Database_Table_Name",
+                        "exportSettings": {
+                            "type": "SnowflakeExportCopyCommand"
+                        }
+                    },
+                    "dataset": {
+                        "referenceName": "DS_Generic_Snowflake",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "database_name": {
+                                "value": "@pipeline().globalParameters.Database_Name",
+                                "type": "Expression"
+                            },
+                            "schema_name": {
+                                "value": "@pipeline().globalParameters.Schema_Name",
+                                "type": "Expression"
+                            },
+                            "table_name": {
+                                "value": "@pipeline().globalParameters.Table_Name",
+                                "type": "Expression"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "name": "SCT_Pre_SQL_Filter_Values",
+                "type": "Script",
+                "dependsOn": [
+                    {
+                        "activity": "LKP_Fetch_SF_Parameters",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "linkedServiceName": {
+                    "referenceName": "snowflake_sales_native",
+                    "type": "LinkedServiceReference",
+                    "parameters": {
+                        "Database": {
+                            "value": "@pipeline().globalParameters.Database_Name",
+                            "type": "Expression"
+                        }
+                    }
+                },
+                "typeProperties": {
+                    "scripts": [
+                        {
+                            "type": "Query",
+                            "text": {
+                                "value": "UPDATE @{pipeline().globalParameters.Snowflake_Checkpoint_Table} SET temp_run_ts=SYSDATE() WHERE edw_database_table_name='@{activity('LKP_Fetch_SF_Parameters').output.firstRow.P_EDW_Database_Table_Name}';\n\nSELECT to_run_ts, TO_DATE(to_run_ts) as to_run_ts_date from @{pipeline().globalParameters.Snowflake_Checkpoint_Table} WHERE edw_database_table_name='@{activity('LKP_Fetch_SF_Parameters').output.firstRow.P_EDW_Database_Table_Name}';",
+                                "type": "Expression"
+                            }
+                        }
+                    ],
+                    "scriptBlockExecutionTimeout": "02:00:00"
+                }
+            },
+            {
+                "name": "SCT_Post_SQL",
+                "type": "Script",
+                "dependsOn": [
+                    {
+                        "activity": "DF_cr_current_appraisal_load",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "linkedServiceName": {
+                    "referenceName": "snowflake_sales_native",
+                    "type": "LinkedServiceReference",
+                    "parameters": {
+                        "Database": {
+                            "value": "@pipeline().globalParameters.Database_Name",
+                            "type": "Expression"
+                        }
+                    }
+                },
+                "typeProperties": {
+                    "scripts": [
+                        {
+                            "type": "Query",
+                            "text": {
+                                "value": "UPDATE @{pipeline().globalParameters.Snowflake_Checkpoint_Table} SET from_run_ts=to_run_ts  WHERE edw_database_table_name='@{activity('LKP_Fetch_SF_Parameters').output.firstRow.P_EDW_Database_Table_Name}';\n\nUPDATE @{pipeline().globalParameters.Snowflake_Checkpoint_Table} SET to_run_ts=temp_run_ts, edl_update_ts=SYSDATE() WHERE edw_database_table_name='@{activity('LKP_Fetch_SF_Parameters').output.firstRow.P_EDW_Database_Table_Name}';",
+                                "type": "Expression"
+                            }
+                        }
+                    ],
+                    "scriptBlockExecutionTimeout": "02:00:00"
+                }
+            }
+        ],
+        "variables": {
+            "V_Session_Start_Time": {
+                "type": "string"
+            }
+        },
+        "folder": {
+            "name": "SALES/EDW_Sales_CCR/PPL_cr_Low_Priority_edw_sales1_2"
+        },
+        "annotations": []
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines",
+    "apiVersion": "2018-06-01"
+}

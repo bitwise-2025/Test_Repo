@@ -1,0 +1,266 @@
+{
+    "name": "PPL_cr_current_inventory_load",
+    "properties": {
+        "activities": [
+            {
+                "name": "Exec_Insert_Email_on_Failure",
+                "type": "ExecutePipeline",
+                "dependsOn": [
+                    {
+                        "activity": "DF_cr_current_inventory_load_PostSql",
+                        "dependencyConditions": [
+                            "Failed"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "PPL_Generic_Email_Framework",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true,
+                    "parameters": {
+                        "Pipeline_Name": {
+                            "value": "@pipeline().Pipeline",
+                            "type": "Expression"
+                        },
+                        "Activity_Name": {
+                            "value": "DF_cr_current_inventory_load",
+                            "type": "Expression"
+                        },
+                        "Status": {
+                            "value": "@activity('DF_cr_current_inventory_load').status",
+                            "type": "Expression"
+                        },
+                        "Start_time": {
+                            "value": "@pipeline().TriggerTime",
+                            "type": "Expression"
+                        },
+                        "Trigger_Type": {
+                            "value": "@pipeline().TriggerType",
+                            "type": "Expression"
+                        },
+                        "Email_Type": "DYNAMIC"
+                    }
+                }
+            },
+            {
+                "name": "DF_cr_current_inventory_load",
+                "type": "ExecuteDataFlow",
+                "dependsOn": [
+                    {
+                        "activity": "LKP_Fetch_SF_Param",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "7.00:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "compute": {
+                        "coreCount": 8,
+                        "computeType": "General"
+                    },
+                    "traceLevel": "Coarse"
+                }
+            },
+            {
+                "name": "V_start_time",
+                "type": "SetVariable",
+                "dependsOn": [],
+                "policy": {
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "variableName": "start_time",
+                    "value": {
+                        "value": "@formatDateTime(utcNow(),'yyyy-MM-dd HH:mm:ss')",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "LKP_Fetch_SF_Param",
+                "type": "Lookup",
+                "dependsOn": [
+                    {
+                        "activity": "V_start_time",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "SnowflakeSource",
+                        "query": "select \n(SELECT to_char(to_timestamp(parameter_value, 'yyyy-mm-dd hh:mi:ss'),'yyyy-mm-dd hh:mi:ss') as begin_date FROM DATAOPS.METADATA_CONTROLS.SF_PARAMETERS\n WHERE pipeline_name='PPL_cr_Low_Priority_edw_sales1_2' AND DATAFLOW_NAME='DF_cr_current_inventory_load' AND PARAMETER_NAME='begin_date' ) as begin_date,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Target_DB' and pipeline_name='PPL_cr_Low_Priority_edw_sales1_2' AND DATAFLOW_NAME='PPL_cr_Low_Priority_edw_sales1_2' ) as Target_DB,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Target_Schema' and pipeline_name='PPL_cr_Low_Priority_edw_sales1_2' AND DATAFLOW_NAME='PPL_cr_Low_Priority_edw_sales1_2' ) as Target_Schema,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Assert_Container' and pipeline_name='PPL_cr_Low_Priority_edw_sales1_2' AND DATAFLOW_NAME='PPL_cr_Low_Priority_edw_sales1_2' ) as Assert_Container,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Target_Table' and pipeline_name='PPL_cr_Low_Priority_edw_sales1_2' AND DATAFLOW_NAME='DF_cr_current_inventory_load' ) as Target_Table,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Assert_Path' and pipeline_name='PPL_cr_Low_Priority_edw_sales1_2' AND DATAFLOW_NAME='DF_cr_current_inventory_load' ) as Assert_Path,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='EDL_Container' and pipeline_name='PPL_cr_Low_Priority_edw_sales1_2' AND DATAFLOW_NAME='PPL_cr_Low_Priority_edw_sales1_2' ) as EDL_Container,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='EDL_Src_Relative_Path' and pipeline_name='PPL_cr_Low_Priority_edw_sales1_2' AND DATAFLOW_NAME='PPL_cr_Low_Priority_edw_sales1_2' ) as EDL_Src_Relative_Path,\n(select parameter_value from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where parameter_name='Checkpoint_Path' and pipeline_name='PPL_cr_Low_Priority_edw_sales1_2' AND DATAFLOW_NAME='PPL_cr_Low_Priority_edw_sales1_2' ) as Checkpoint_Path,\n(select distinct SUBJECT_AREA from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS where pipeline_name='PPL_cr_Low_Priority_edw_sales1_2' and dataflow_name='PPL_cr_Low_Priority_edw_sales1_2' ) as SUBJECT_AREA,\n(select distinct PIPELINE_NAME from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS WHERE PIPELINE_NAME='PPL_cr_Low_Priority_edw_sales1_2' and dataflow_name='PPL_cr_Low_Priority_edw_sales1_2') as PIPELINE_NAME,\n(select distinct DATAFLOW_NAME from DATAOPS.METADATA_CONTROLS.SF_PARAMETERS WHERE PIPELINE_NAME='PPL_cr_Low_Priority_edw_sales1_2' and dataflow_name='DF_cr_current_inventory_load') as DATAFLOW_NAME",
+                        "exportSettings": {
+                            "type": "SnowflakeExportCopyCommand"
+                        }
+                    },
+                    "dataset": {
+                        "referenceName": "DS_Generic_Snowflake",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "database_name": {
+                                "value": "@pipeline().globalParameters.Database_Name",
+                                "type": "Expression"
+                            },
+                            "schema_name": {
+                                "value": "@pipeline().globalParameters.Schema_Name",
+                                "type": "Expression"
+                            },
+                            "table_name": {
+                                "value": "@pipeline().globalParameters.Table_Name",
+                                "type": "Expression"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "name": "DF_cr_current_inventory_load_PostSql",
+                "type": "ExecuteDataFlow",
+                "dependsOn": [
+                    {
+                        "activity": "DF_cr_current_inventory_load",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataflow": {
+                        "referenceName": "Generic_post_sql",
+                        "type": "DataFlowReference"
+                    },
+                    "compute": {
+                        "coreCount": 8,
+                        "computeType": "General"
+                    },
+                    "traceLevel": "Coarse"
+                }
+            },
+            {
+                "name": "SP_APPLY_DELETE_LOG_TASK",
+                "description": "sp_apply_delete_log",
+                "type": "Script",
+                "dependsOn": [
+                    {
+                        "activity": "DF_cr_current_inventory_load",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "linkedServiceName": {
+                    "referenceName": "snowflake_sales_native",
+                    "type": "LinkedServiceReference",
+                    "parameters": {
+                        "Database": {
+                            "value": "@pipeline().globalParameters.Database_Name",
+                            "type": "Expression"
+                        }
+                    }
+                },
+                "typeProperties": {
+                    "scripts": [
+                        {
+                            "type": "Query",
+                            "text": "CALL DATAOPS.METADATA_CONTROLS.SP_ADF_CALLER (CALL_STMT => 'CALL SALES.edw_stage_ccr.sp_apply_delete_log(TABLE_NAME => ''current_inventory''::VARCHAR, DBNAME => ''edw_sales_ccr''::VARCHAR);');\r\n\r\n"
+                        }
+                    ],
+                    "scriptBlockExecutionTimeout": "02:00:00"
+                }
+            },
+            {
+                "name": "SP_REMOVE_DEL_STATUS_BY_TABLE_TASK",
+                "description": "sp_remove_del_status_by_table",
+                "type": "Script",
+                "dependsOn": [
+                    {
+                        "activity": "SP_APPLY_DELETE_LOG_TASK",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "linkedServiceName": {
+                    "referenceName": "snowflake_sales_native",
+                    "type": "LinkedServiceReference",
+                    "parameters": {
+                        "Database": {
+                            "value": "@pipeline().globalParameters.Database_Name",
+                            "type": "Expression"
+                        }
+                    }
+                },
+                "typeProperties": {
+                    "scripts": [
+                        {
+                            "type": "Query",
+                            "text": "CALL DATAOPS.METADATA_CONTROLS.SP_ADF_CALLER (CALL_STMT => 'CALL SALES.edw_stage_ccr.sp_remove_del_status_by_table(DBNAME => ''edw_sales_ccr''::VARCHAR, TABLE_NAME => ''current_inventory''::VARCHAR);');"
+                        }
+                    ],
+                    "scriptBlockExecutionTimeout": "02:00:00"
+                }
+            }
+        ],
+        "variables": {
+            "start_time": {
+                "type": "string"
+            }
+        },
+        "folder": {
+            "name": "SALES/EDW_Sales_CCR/PPL_cr_Low_Priority_edw_sales1_2"
+        },
+        "annotations": []
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines",
+    "apiVersion": "2018-06-01"
+}
